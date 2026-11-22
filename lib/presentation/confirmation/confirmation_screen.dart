@@ -251,56 +251,93 @@ class ConfirmationScreen extends GetView<ConfirmationController> {
               child: Column(
                 children: [
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            route?.sourceCity ?? '',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            trip?.departureTime ?? '',
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.secondary),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Boarding: ${booking.boardingPoint}',
-                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              route?.sourceCity ?? '',
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              trip?.departureTime ?? '',
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.secondary),
+                            ),
+                          ],
+                        ),
                       ),
-                      Column(
-                        children: [
-                          const Icon(Icons.arrow_forward_rounded, color: AppColors.secondary, size: 22),
-                          Text(
-                            DateFormatter.formatDbStringToDisplay(trip?.journeyDate ?? ''),
-                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
-                          ),
-                        ],
+                      Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 8.0),
+                        child: Column(
+                          children: [
+                            const Icon(Icons.arrow_forward_rounded, color: AppColors.secondary, size: 22),
+                            Text(
+                              DateFormatter.formatDbStringToDisplay(trip?.journeyDate ?? ''),
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                            ),
+                          ],
+                        ),
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Text(
-                            route?.destinationCity ?? '',
-                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                          ),
-                          const SizedBox(height: 2),
-                          Text(
-                            trip?.arrivalTime ?? '',
-                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.secondary),
-                          ),
-                          const SizedBox(height: 4),
-                          Text(
-                            'Dropping: ${booking.droppingPoint}',
-                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                          ),
-                        ],
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Text(
+                              route?.destinationCity ?? '',
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                            ),
+                            const SizedBox(height: 2),
+                            Text(
+                              trip?.arrivalTime ?? '',
+                              style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.secondary),
+                            ),
+                          ],
+                        ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 12),
+                  Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.background,
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
+                          children: [
+                            const Icon(Icons.trip_origin_rounded, size: 14, color: AppColors.secondary),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Boarding: ${booking.boardingPoint}',
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 6),
+                        Row(
+                          children: [
+                            const Icon(Icons.location_on_rounded, size: 14, color: AppColors.accent),
+                            const SizedBox(width: 6),
+                            Expanded(
+                              child: Text(
+                                'Dropping: ${booking.droppingPoint}',
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
                   ),
                 ],
               ),
