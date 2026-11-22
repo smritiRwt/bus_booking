@@ -4,7 +4,6 @@ import '../../core/constants/app_colors.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../core/widgets/empty_state_view.dart';
 import '../../routes/app_routes.dart';
-import '../bus_details/bus_details_controller.dart';
 import 'search_controller.dart';
 import 'widgets/bus_card.dart';
 import 'widgets/filter_bottom_sheet.dart';
@@ -90,17 +89,32 @@ class SearchScreen extends GetView<SearchBusController> {
                 child: ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: controller.trips.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (_, _) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final trip = controller.trips[index];
-                    return BusCard(
-                      trip: trip,
-                      onViewDetails: () {
-                        Get.toNamed(AppRoutes.busDetails, arguments: trip);
+                    return TweenAnimationBuilder<double>(
+                      key: ValueKey('bus_card_${trip.id}'),
+                      duration: Duration(milliseconds: 250 + (index * 60).clamp(0, 400)),
+                      curve: Curves.easeOutCubic,
+                      tween: Tween(begin: 0.0, end: 1.0),
+                      builder: (context, val, child) {
+                        return Opacity(
+                          opacity: val,
+                          child: Transform.translate(
+                            offset: Offset(0, (1 - val) * 24),
+                            child: child,
+                          ),
+                        );
                       },
-                      onSelectSeats: () {
-                        Get.toNamed(AppRoutes.seatSelection, arguments: trip);
-                      },
+                      child: BusCard(
+                        trip: trip,
+                        onViewDetails: () {
+                          Get.toNamed(AppRoutes.busDetails, arguments: trip);
+                        },
+                        onSelectSeats: () {
+                          Get.toNamed(AppRoutes.seatSelection, arguments: trip);
+                        },
+                      ),
                     );
                   },
                 ),

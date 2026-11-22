@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:bus_booking/core/constants/app_colors.dart';
 import 'package:bus_booking/core/utils/currency_formatter.dart';
 import 'package:bus_booking/core/utils/date_formatter.dart';
 import 'package:bus_booking/core/utils/pnr_generator.dart';

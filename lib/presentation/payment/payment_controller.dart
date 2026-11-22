@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../data/datasources/preferences_datasource.dart';
-import '../../domain/entities/booking.dart';
 import '../../domain/entities/passenger.dart';
 import '../../domain/entities/seat.dart';
 import '../../domain/entities/trip.dart';

@@ -4,6 +4,8 @@ import '../../core/constants/app_colors.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/custom_button.dart';
+import '../../core/widgets/promo_card_widget.dart';
+import '../../core/widgets/pulse_radar_widget.dart';
 import '../../core/widgets/status_badge.dart';
 import '../../routes/app_routes.dart';
 import 'home_controller.dart';
@@ -33,11 +35,19 @@ class HomeScreen extends GetView<HomeController> {
                   children: [
                     const SizedBox(height: 16),
                     _buildSearchCard(context, controller),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 16),
+                    // Interactive Mystery Promo Card
+                    PromoCardWidget(
+                      onCouponApplied: controller.applyMysteryCoupon,
+                    ),
+                    const SizedBox(height: 16),
+                    // Live Radar Tracker Banner
+                    _buildLiveRadarCard(context),
+                    const SizedBox(height: 20),
                     _buildUpcomingBookingSection(context, controller),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     _buildPopularDestinationsSection(context, controller),
-                    const SizedBox(height: 24),
+                    const SizedBox(height: 20),
                     _buildPopularRoutesSection(context, controller),
                     const SizedBox(height: 32),
                   ],
@@ -60,7 +70,14 @@ class HomeScreen extends GetView<HomeController> {
       ),
       decoration: const BoxDecoration(
         gradient: AppColors.primaryGradient,
-        borderRadius: BorderRadius.vertical(bottom: Radius.circular(28)),
+        borderRadius: BorderRadius.vertical(bottom: Radius.circular(32)),
+        boxShadow: [
+          BoxShadow(
+            color: Color(0x330077B6),
+            blurRadius: 16,
+            offset: Offset(0, 6),
+          ),
+        ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -71,37 +88,59 @@ class HomeScreen extends GetView<HomeController> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                        decoration: BoxDecoration(
+                          color: Colors.white.withValues(alpha: 0.15),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: Text(
+                          controller.timeGreeting,
+                          style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
                   Obx(
                     () => Text(
                       'Hello, ${controller.userName.value} 👋',
                       style: const TextStyle(
                         fontSize: 22,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: Colors.white,
+                        letterSpacing: 0.3,
                       ),
                     ),
                   ),
-                  const SizedBox(height: 4),
+                  const SizedBox(height: 2),
                   Text(
-                    'Where would you like to travel?',
+                    'Smart way to book your next journey',
                     style: TextStyle(
-                      fontSize: 14,
-                      color: Colors.white.withOpacity(0.8),
+                      fontSize: 13,
+                      color: Colors.white.withValues(alpha: 0.8),
                     ),
                   ),
                 ],
               ),
               Container(
                 decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.12),
-                  borderRadius: BorderRadius.circular(12),
+                  color: Colors.white.withValues(alpha: 0.12),
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: Colors.white.withValues(alpha: 0.15)),
                 ),
                 child: IconButton(
                   icon: const Icon(Icons.notifications_none_rounded, color: Colors.white),
                   onPressed: () {
                     Get.snackbar(
                       'SmartBus Notifications',
-                      'No new notifications right now. Have a safe journey!',
+                      'No new notifications. All 12 bus routes running on schedule!',
                       backgroundColor: AppColors.primary,
                       colorText: Colors.white,
                     );
@@ -118,18 +157,18 @@ class HomeScreen extends GetView<HomeController> {
   Widget _buildSearchCard(BuildContext context, HomeController controller) {
     return AppCard(
       padding: const EdgeInsets.all(20),
-      borderRadius: 20,
+      borderRadius: 24,
       boxShadow: [
         BoxShadow(
-          color: AppColors.primary.withOpacity(0.08),
-          blurRadius: 18,
-          offset: const Offset(0, 6),
+          color: AppColors.primary.withValues(alpha: 0.08),
+          blurRadius: 20,
+          offset: const Offset(0, 8),
         ),
       ],
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // City Selection with Swap
+          // City Selection with Interactive Animated Swap
           Stack(
             alignment: Alignment.centerRight,
             children: [
@@ -138,7 +177,7 @@ class HomeScreen extends GetView<HomeController> {
                   // From City
                   _buildCityDropdown(
                     context: context,
-                    label: 'From City',
+                    label: 'PICKUP FROM',
                     icon: Icons.trip_origin_rounded,
                     iconColor: AppColors.secondary,
                     selectedCity: controller.fromCity,
@@ -151,7 +190,7 @@ class HomeScreen extends GetView<HomeController> {
                   // To City
                   _buildCityDropdown(
                     context: context,
-                    label: 'To City',
+                    label: 'DROP AT',
                     icon: Icons.location_on_rounded,
                     iconColor: AppColors.accent,
                     selectedCity: controller.toCity,
@@ -160,30 +199,42 @@ class HomeScreen extends GetView<HomeController> {
                   ),
                 ],
               ),
-              // Swap Button
+              // Interactive Animated Swap Button
               Positioned(
                 right: 12,
-                child: InkWell(
-                  onTap: controller.swapCities,
-                  borderRadius: BorderRadius.circular(20),
-                  child: Container(
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      color: Colors.white,
-                      shape: BoxShape.circle,
-                      border: Border.all(color: AppColors.border, width: 1.5),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withOpacity(0.08),
-                          blurRadius: 6,
-                          offset: const Offset(0, 2),
+                child: Obx(
+                  () => TweenAnimationBuilder<double>(
+                    tween: Tween<double>(begin: 0, end: controller.swapRotationAngle.value),
+                    duration: const Duration(milliseconds: 350),
+                    curve: Curves.easeOutBack,
+                    builder: (context, angle, child) {
+                      return Transform.rotate(
+                        angle: angle,
+                        child: child,
+                      );
+                    },
+                    child: InkWell(
+                      onTap: controller.swapCities,
+                      borderRadius: BorderRadius.circular(22),
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          gradient: AppColors.bannerGradient,
+                          shape: BoxShape.circle,
+                          boxShadow: [
+                            BoxShadow(
+                              color: AppColors.secondary.withValues(alpha: 0.35),
+                              blurRadius: 8,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                    child: const Icon(
-                      Icons.swap_vert_rounded,
-                      color: AppColors.secondary,
-                      size: 22,
+                        child: const Icon(
+                          Icons.swap_vert_rounded,
+                          color: Colors.white,
+                          size: 20,
+                        ),
+                      ),
                     ),
                   ),
                 ),
@@ -194,11 +245,12 @@ class HomeScreen extends GetView<HomeController> {
 
           // Date Selection Section
           const Text(
-            'Journey Date',
+            'JOURNEY DATE',
             style: TextStyle(
-              fontSize: 13,
-              fontWeight: FontWeight.w600,
+              fontSize: 11,
+              fontWeight: FontWeight.w700,
               color: AppColors.textSecondary,
+              letterSpacing: 0.5,
             ),
           ),
           const SizedBox(height: 10),
@@ -233,18 +285,6 @@ class HomeScreen extends GetView<HomeController> {
                       initialDate: controller.selectedDate.value,
                       firstDate: DateTime.now(),
                       lastDate: DateTime.now().add(const Duration(days: 90)),
-                      builder: (context, child) {
-                        return Theme(
-                          data: Theme.of(context).copyWith(
-                            colorScheme: const ColorScheme.light(
-                              primary: AppColors.secondary,
-                              onPrimary: Colors.white,
-                              onSurface: AppColors.textPrimary,
-                            ),
-                          ),
-                          child: child!,
-                        );
-                      },
                     );
                     if (picked != null) {
                       controller.setDate(picked);
@@ -254,6 +294,7 @@ class HomeScreen extends GetView<HomeController> {
                   child: Container(
                     padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 10),
                     decoration: BoxDecoration(
+                      color: Colors.white,
                       border: Border.all(color: AppColors.border),
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -267,7 +308,7 @@ class HomeScreen extends GetView<HomeController> {
                             DateFormatter.toShortDisplay(controller.selectedDate.value),
                             style: const TextStyle(
                               fontSize: 13,
-                              fontWeight: FontWeight.w600,
+                              fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary,
                             ),
                           ),
@@ -293,6 +334,54 @@ class HomeScreen extends GetView<HomeController> {
     );
   }
 
+  Widget _buildLiveRadarCard(BuildContext context) {
+    return AppCard(
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+      borderRadius: 16,
+      color: Colors.white,
+      child: Row(
+        children: [
+          const PulseRadarWidget(
+            color: Color(0xFF10B981),
+            size: 38,
+          ),
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: const [
+                Text(
+                  'Live Fleet Radar Active',
+                  style: TextStyle(
+                    fontSize: 13,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary,
+                  ),
+                ),
+                SizedBox(height: 2),
+                Text(
+                  'All 12 fleet buses tracked via on-board GPS',
+                  style: TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                ),
+              ],
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withValues(alpha: 0.12),
+              borderRadius: BorderRadius.circular(6),
+            ),
+            child: const Text(
+              'LIVE',
+              style: TextStyle(fontSize: 10, fontWeight: FontWeight.w800, color: Color(0xFF059669)),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
   Widget _buildDateChip({
     required String label,
     required bool isSelected,
@@ -301,7 +390,8 @@ class HomeScreen extends GetView<HomeController> {
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(10),
-      child: Container(
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
         decoration: BoxDecoration(
           color: isSelected ? AppColors.secondary : Colors.grey.shade100,
@@ -309,12 +399,21 @@ class HomeScreen extends GetView<HomeController> {
           border: Border.all(
             color: isSelected ? AppColors.secondary : Colors.transparent,
           ),
+          boxShadow: isSelected
+              ? [
+                  BoxShadow(
+                    color: AppColors.secondary.withValues(alpha: 0.3),
+                    blurRadius: 6,
+                    offset: const Offset(0, 2),
+                  ),
+                ]
+              : null,
         ),
         child: Text(
           label,
           style: TextStyle(
             fontSize: 13,
-            fontWeight: FontWeight.w600,
+            fontWeight: FontWeight.w700,
             color: isSelected ? Colors.white : AppColors.textPrimary,
           ),
         ),
@@ -342,8 +441,8 @@ class HomeScreen extends GetView<HomeController> {
             Container(
               padding: const EdgeInsets.all(8),
               decoration: BoxDecoration(
-                color: iconColor.withOpacity(0.1),
-                borderRadius: BorderRadius.circular(8),
+                color: iconColor.withValues(alpha: 0.12),
+                borderRadius: BorderRadius.circular(10),
               ),
               child: Icon(icon, color: iconColor, size: 20),
             ),
@@ -355,9 +454,10 @@ class HomeScreen extends GetView<HomeController> {
                   Text(
                     label,
                     style: const TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w500,
-                      color: AppColors.textSecondary,
+                      fontSize: 10,
+                      fontWeight: FontWeight.w700,
+                      color: AppColors.textTertiary,
+                      letterSpacing: 0.5,
                     ),
                   ),
                   const SizedBox(height: 2),
@@ -366,7 +466,7 @@ class HomeScreen extends GetView<HomeController> {
                       selectedCity.value,
                       style: const TextStyle(
                         fontSize: 16,
-                        fontWeight: FontWeight.w700,
+                        fontWeight: FontWeight.w800,
                         color: AppColors.textPrimary,
                       ),
                     ),
@@ -412,10 +512,10 @@ class HomeScreen extends GetView<HomeController> {
               ),
               const SizedBox(height: 16),
               Text(
-                'Select $title',
+                'Select City',
                 style: const TextStyle(
                   fontSize: 18,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -423,7 +523,7 @@ class HomeScreen extends GetView<HomeController> {
               Expanded(
                 child: ListView.separated(
                   itemCount: cities.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (_, _) => const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final city = cities[index];
                     return ListTile(
@@ -431,7 +531,7 @@ class HomeScreen extends GetView<HomeController> {
                       leading: const Icon(Icons.location_city_rounded, color: AppColors.secondary),
                       title: Text(
                         city,
-                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+                        style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
                       ),
                       onTap: () {
                         onSelect(city);
@@ -466,7 +566,7 @@ class HomeScreen extends GetView<HomeController> {
                 'Upcoming Journey',
                 style: TextStyle(
                   fontSize: 17,
-                  fontWeight: FontWeight.w700,
+                  fontWeight: FontWeight.w800,
                   color: AppColors.textPrimary,
                 ),
               ),
@@ -474,7 +574,7 @@ class HomeScreen extends GetView<HomeController> {
                 onPressed: () {
                   Get.toNamed(AppRoutes.bookingDetails, arguments: booking);
                 },
-                child: const Text('View Ticket', style: TextStyle(fontWeight: FontWeight.w600)),
+                child: const Text('View Ticket', style: TextStyle(fontWeight: FontWeight.w700)),
               ),
             ],
           ),
@@ -482,9 +582,9 @@ class HomeScreen extends GetView<HomeController> {
           AppCard(
             onTap: () => Get.toNamed(AppRoutes.bookingDetails, arguments: booking),
             padding: const EdgeInsets.all(16),
-            borderRadius: 16,
+            borderRadius: 18,
             color: Colors.white,
-            border: Border.all(color: AppColors.secondary.withOpacity(0.3)),
+            border: Border.all(color: AppColors.secondary.withValues(alpha: 0.3)),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -494,7 +594,7 @@ class HomeScreen extends GetView<HomeController> {
                     Container(
                       padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                       decoration: BoxDecoration(
-                        color: AppColors.secondary.withOpacity(0.1),
+                        color: AppColors.secondary.withValues(alpha: 0.1),
                         borderRadius: BorderRadius.circular(6),
                       ),
                       child: Text(
@@ -514,7 +614,7 @@ class HomeScreen extends GetView<HomeController> {
                   children: [
                     Text(
                       route?.sourceCity ?? 'Origin',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                     ),
                     const Padding(
                       padding: EdgeInsets.symmetric(horizontal: 8.0),
@@ -522,7 +622,7 @@ class HomeScreen extends GetView<HomeController> {
                     ),
                     Text(
                       route?.destinationCity ?? 'Destination',
-                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800),
                     ),
                   ],
                 ),
@@ -545,7 +645,7 @@ class HomeScreen extends GetView<HomeController> {
                     const Spacer(),
                     Text(
                       'Seats: ${booking.bookingSeats.map((s) => s.seatNumber).join(', ')}',
-                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.primary),
+                      style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.primary),
                     ),
                   ],
                 ),
@@ -574,7 +674,7 @@ class HomeScreen extends GetView<HomeController> {
           'Popular Destinations',
           style: TextStyle(
             fontSize: 17,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
             color: AppColors.textPrimary,
           ),
         ),
@@ -591,7 +691,7 @@ class HomeScreen extends GetView<HomeController> {
                 margin: const EdgeInsets.only(right: 12),
                 child: AppCard(
                   padding: const EdgeInsets.all(12),
-                  borderRadius: 14,
+                  borderRadius: 16,
                   onTap: () {
                     controller.toCity.value = d['name'] as String;
                     controller.searchBuses();
@@ -603,7 +703,7 @@ class HomeScreen extends GetView<HomeController> {
                       Container(
                         padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
-                          color: AppColors.secondary.withOpacity(0.1),
+                          color: AppColors.secondary.withValues(alpha: 0.12),
                           shape: BoxShape.circle,
                         ),
                         child: Icon(d['icon'] as IconData, color: AppColors.secondary, size: 20),
@@ -613,7 +713,7 @@ class HomeScreen extends GetView<HomeController> {
                         children: [
                           Text(
                             d['name'] as String,
-                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                           ),
                           Text(
                             d['tag'] as String,
@@ -647,10 +747,10 @@ class HomeScreen extends GetView<HomeController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          'Popular Routes',
+          'Popular Express Routes',
           style: TextStyle(
             fontSize: 17,
-            fontWeight: FontWeight.w700,
+            fontWeight: FontWeight.w800,
             color: AppColors.textPrimary,
           ),
         ),
@@ -659,20 +759,20 @@ class HomeScreen extends GetView<HomeController> {
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: routes.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          separatorBuilder: (_, _) => const SizedBox(height: 10),
           itemBuilder: (context, index) {
             final r = routes[index];
             return AppCard(
               padding: const EdgeInsets.all(14),
-              borderRadius: 14,
+              borderRadius: 16,
               onTap: () => controller.selectQuickRoute(r['from']!, r['to']!),
               child: Row(
                 children: [
                   Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: AppColors.primary.withOpacity(0.06),
-                      borderRadius: BorderRadius.circular(10),
+                      color: AppColors.primary.withValues(alpha: 0.08),
+                      borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Icon(Icons.directions_bus_filled_rounded, color: AppColors.primary, size: 22),
                   ),
@@ -683,7 +783,7 @@ class HomeScreen extends GetView<HomeController> {
                       children: [
                         Text(
                           '${r['from']} ➔ ${r['to']}',
-                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                          style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w800),
                         ),
                         const SizedBox(height: 2),
                         Text(
@@ -706,7 +806,7 @@ class HomeScreen extends GetView<HomeController> {
                       ),
                       const Text(
                         'Book Now ➔',
-                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.accent),
+                        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.accent),
                       ),
                     ],
                   ),

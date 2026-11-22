@@ -5,8 +5,9 @@ import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../core/utils/date_formatter.dart';
 import '../../core/widgets/app_card.dart';
+import '../../core/widgets/confetti_overlay.dart';
 import '../../core/widgets/custom_button.dart';
-import '../../core/widgets/status_badge.dart';
+import '../../core/widgets/ticket_clipper.dart';
 import 'confirmation_controller.dart';
 
 class ConfirmationScreen extends GetView<ConfirmationController> {
@@ -36,33 +37,32 @@ class ConfirmationScreen extends GetView<ConfirmationController> {
             IconButton(
               icon: const Icon(Icons.home_rounded),
               onPressed: controller.goToHome,
+              tooltip: 'Home',
             ),
           ],
         ),
-        body: SingleChildScrollView(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            children: [
-              // Success Animation Banner
-              _buildSuccessBanner(booking),
-              const SizedBox(height: 16),
+        body: ConfettiOverlay(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(16),
+            child: Column(
+              children: [
+                // Success Animated Badge & Headline
+                _buildSuccessBanner(booking),
+                const SizedBox(height: 18),
 
-              // PNR Card with Copy button & QR Code
-              _buildPnrAndQrCard(controller, booking),
-              const SizedBox(height: 16),
+                // Physical Perforated Boarding Pass / Ticket Stub
+                _buildPerforatedTicketStub(controller, booking, trip, bus, route),
+                const SizedBox(height: 20),
 
-              // Trip & Journey Summary
-              _buildJourneyCard(booking, trip, bus, route),
-              const SizedBox(height: 16),
+                // Passenger Details Card
+                _buildPassengerListCard(booking),
+                const SizedBox(height: 20),
 
-              // Passenger Details
-              _buildPassengerListCard(booking),
-              const SizedBox(height: 16),
-
-              // PDF Action Buttons
-              _buildPdfActions(controller),
-              const SizedBox(height: 32),
-            ],
+                // Action Buttons
+                _buildPdfActions(controller),
+                const SizedBox(height: 32),
+              ],
+            ),
           ),
         ),
       ),
@@ -72,10 +72,10 @@ class ConfirmationScreen extends GetView<ConfirmationController> {
   Widget _buildSuccessBanner(dynamic booking) {
     return Column(
       children: [
-        const SizedBox(height: 8),
+        const SizedBox(height: 6),
         TweenAnimationBuilder<double>(
           tween: Tween(begin: 0.0, end: 1.0),
-          duration: const Duration(milliseconds: 800),
+          duration: const Duration(milliseconds: 900),
           curve: Curves.elasticOut,
           builder: (context, value, child) {
             return Transform.scale(
@@ -84,27 +84,36 @@ class ConfirmationScreen extends GetView<ConfirmationController> {
             );
           },
           child: Container(
-            width: 76,
-            height: 76,
-            decoration: const BoxDecoration(
-              color: AppColors.success,
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              gradient: const LinearGradient(
+                colors: [Color(0xFF059669), Color(0xFF10B981)],
+              ),
               shape: BoxShape.circle,
+              boxShadow: [
+                BoxShadow(
+                  color: const Color(0xFF10B981).withValues(alpha: 0.4),
+                  blurRadius: 18,
+                  offset: const Offset(0, 6),
+                ),
+              ],
             ),
-            child: const Icon(Icons.check_rounded, size: 46, color: Colors.white),
+            child: const Icon(Icons.check_rounded, size: 48, color: Colors.white),
           ),
         ),
         const SizedBox(height: 14),
         const Text(
           'Booking Confirmed! 🎉',
           style: TextStyle(
-            fontSize: 22,
+            fontSize: 24,
             fontWeight: FontWeight.w800,
             color: AppColors.textPrimary,
           ),
         ),
         const SizedBox(height: 4),
         const Text(
-          'Your ticket is ready and confirmed in our local database.',
+          'Your bus seats are locked in the local SQLite database.',
           textAlign: TextAlign.center,
           style: TextStyle(fontSize: 13, color: AppColors.textSecondary),
         ),
@@ -112,135 +121,246 @@ class ConfirmationScreen extends GetView<ConfirmationController> {
     );
   }
 
-  Widget _buildPnrAndQrCard(ConfirmationController controller, dynamic booking) {
-    return AppCard(
-      padding: const EdgeInsets.all(18),
-      borderRadius: 18,
-      child: Column(
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+  Widget _buildPerforatedTicketStub(
+    ConfirmationController controller,
+    dynamic booking,
+    dynamic trip,
+    dynamic bus,
+    dynamic route,
+  ) {
+    return ClipPath(
+      clipper: TicketClipper(punchRadius: 12.0, punchPositionFraction: 0.65),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(20),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.07),
+              blurRadius: 16,
+              offset: const Offset(0, 6),
+            ),
+          ],
+        ),
+        child: Column(
+          children: [
+            // Top Section: Operator & PNR Header
+            Container(
+              padding: const EdgeInsets.all(20),
+              decoration: const BoxDecoration(
+                gradient: AppColors.primaryGradient,
+              ),
+              child: Column(
                 children: [
-                  const Text('PNR NUMBER', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
-                  const SizedBox(height: 2),
                   Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        booking.pnr,
-                        style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.primary),
+                      Expanded(
+                        child: Text(
+                          bus?.operatorName ?? 'SmartBus Express',
+                          style: const TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
                       ),
-                      IconButton(
-                        icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.secondary),
-                        onPressed: controller.copyPnr,
-                        tooltip: 'Copy PNR',
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: const Color(0xFF10B981),
+                          borderRadius: BorderRadius.circular(20),
+                        ),
+                        child: const Text(
+                          'CONFIRMED ✓',
+                          style: TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 14),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'PNR NUMBER',
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.7)),
+                          ),
+                          const SizedBox(height: 2),
+                          Row(
+                            children: [
+                              Text(
+                                booking.pnr,
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w900,
+                                  color: Colors.white,
+                                  letterSpacing: 1.0,
+                                ),
+                              ),
+                              const SizedBox(width: 6),
+                              InkWell(
+                                onTap: controller.copyPnr,
+                                child: Container(
+                                  padding: const EdgeInsets.all(4),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.2),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: const Icon(Icons.copy_rounded, size: 14, color: Colors.white),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            'ASSIGNED SEATS',
+                            style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.7)),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            booking.bookingSeats.map((s) => s.seatNumber).join(', '),
+                            style: const TextStyle(
+                              fontSize: 18,
+                              fontWeight: FontWeight.w900,
+                              color: Color(0xFFFDE047),
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
                 ],
               ),
-              StatusBadge(status: booking.bookingStatus),
-            ],
-          ),
-          const Divider(height: 1),
-          const SizedBox(height: 14),
-          // QR Code with Booking Data
-          Container(
-            padding: const EdgeInsets.all(12),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: AppColors.border),
             ),
-            child: Column(
-              children: [
-                QrImageView(
-                  data: 'SMARTBUS|${booking.pnr}|${booking.tripId}|${booking.totalAmount}',
-                  version: QrVersions.auto,
-                  size: 140.0,
-                  backgroundColor: Colors.white,
-                ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Scan this QR code during bus boarding',
-                  style: TextStyle(fontSize: 10, fontWeight: FontWeight.w500, color: AppColors.textSecondary),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
-  Widget _buildJourneyCard(dynamic booking, dynamic trip, dynamic bus, dynamic route) {
-    return AppCard(
-      padding: const EdgeInsets.all(18),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                bus?.operatorName ?? 'SmartBus Express',
-                style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
-              ),
-              Text(
-                'Seats: ${booking.bookingSeats.map((s) => s.seatNumber).join(', ')}',
-                style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.secondary),
-              ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+            // Middle Section: Journey Details
+            Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+              child: Column(
                 children: [
-                  Text(route?.sourceCity ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                  Text(trip?.departureTime ?? '', style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 4),
-                  Text('Boarding: ${booking.boardingPoint}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-                ],
-              ),
-              Column(
-                children: [
-                  const Icon(Icons.arrow_forward_rounded, color: AppColors.secondary),
-                  Text(
-                    DateFormatter.formatDbStringToDisplay(trip?.journeyDate ?? ''),
-                    style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            route?.sourceCity ?? '',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            trip?.departureTime ?? '',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.secondary),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Boarding: ${booking.boardingPoint}',
+                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        children: [
+                          const Icon(Icons.arrow_forward_rounded, color: AppColors.secondary, size: 22),
+                          Text(
+                            DateFormatter.formatDbStringToDisplay(trip?.journeyDate ?? ''),
+                            style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.end,
+                        children: [
+                          Text(
+                            route?.destinationCity ?? '',
+                            style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                          ),
+                          const SizedBox(height: 2),
+                          Text(
+                            trip?.arrivalTime ?? '',
+                            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: AppColors.secondary),
+                          ),
+                          const SizedBox(height: 4),
+                          Text(
+                            'Dropping: ${booking.droppingPoint}',
+                            style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                          ),
+                        ],
+                      ),
+                    ],
                   ),
                 ],
               ),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.end,
+            ),
+
+            // Perforated Dashed Tear Line
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: CustomPaint(
+                size: const Size(double.infinity, 1),
+                painter: DashedLinePainter(dashWidth: 6.0, dashSpace: 5.0),
+              ),
+            ),
+
+            // Bottom Section: QR Code & Total Paid
+            Padding(
+              padding: const EdgeInsets.all(20),
+              child: Row(
                 children: [
-                  Text(route?.destinationCity ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                  Text(trip?.arrivalTime ?? '', style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w600)),
-                  const SizedBox(height: 4),
-                  Text('Dropping: ${booking.droppingPoint}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(10),
+                      border: Border.all(color: AppColors.border),
+                    ),
+                    child: QrImageView(
+                      data: 'SMARTBUS|${booking.pnr}|${booking.tripId}|${booking.totalAmount}',
+                      version: QrVersions.auto,
+                      size: 90.0,
+                      backgroundColor: Colors.white,
+                    ),
+                  ),
+                  const SizedBox(width: 16),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        const Text(
+                          'TOTAL AMOUNT PAID',
+                          style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.textTertiary),
+                        ),
+                        const SizedBox(height: 2),
+                        Text(
+                          CurrencyFormatter.format(booking.totalAmount),
+                          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppColors.primary),
+                        ),
+                        const SizedBox(height: 6),
+                        const Text(
+                          'Show this digital pass or PDF ticket during boarding.',
+                          style: TextStyle(fontSize: 11, color: AppColors.textSecondary, height: 1.3),
+                        ),
+                      ],
+                    ),
+                  ),
                 ],
               ),
-            ],
-          ),
-          const SizedBox(height: 14),
-          const Divider(height: 1),
-          const SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              const Text('Total Amount Paid:', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
-              Text(
-                CurrencyFormatter.format(booking.totalAmount),
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.primary),
-              ),
-            ],
-          ),
-        ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -248,10 +368,17 @@ class ConfirmationScreen extends GetView<ConfirmationController> {
   Widget _buildPassengerListCard(dynamic booking) {
     return AppCard(
       padding: const EdgeInsets.all(18),
+      borderRadius: 18,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text('Passenger Details', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+          Row(
+            children: const [
+              Icon(Icons.people_alt_rounded, size: 18, color: AppColors.secondary),
+              SizedBox(width: 8),
+              Text('Passenger Manifest', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
+            ],
+          ),
           const SizedBox(height: 12),
           ...booking.passengers.map((p) {
             return Padding(
@@ -259,8 +386,15 @@ class ConfirmationScreen extends GetView<ConfirmationController> {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('${p.fullName} (${p.age} yrs, ${p.gender})', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                  Text('Seat ${p.seatNumber}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.secondary)),
+                  Text('${p.fullName} (${p.age} yrs, ${p.gender})', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                    decoration: BoxDecoration(
+                      color: AppColors.secondary.withValues(alpha: 0.12),
+                      borderRadius: BorderRadius.circular(8),
+                    ),
+                    child: Text('Seat ${p.seatNumber}', style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.secondary)),
+                  ),
                 ],
               ),
             );

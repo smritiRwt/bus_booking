@@ -9,9 +9,9 @@ import '../../core/utils/date_formatter.dart';
 import '../../core/widgets/app_card.dart';
 import '../../core/widgets/custom_button.dart';
 import '../../core/widgets/status_badge.dart';
+import '../../core/widgets/ticket_clipper.dart';
 import '../../domain/entities/booking.dart';
 import '../../domain/usecases/generate_ticket_pdf_usecase.dart';
-import 'my_bookings_controller.dart';
 
 class BookingDetailsScreen extends StatelessWidget {
   const BookingDetailsScreen({super.key});
@@ -27,7 +27,7 @@ class BookingDetailsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
-        title: const Text('Ticket Details'),
+        title: const Text('Digital Boarding Pass'),
         actions: [
           IconButton(
             icon: const Icon(Icons.share_rounded),
@@ -42,108 +42,202 @@ class BookingDetailsScreen extends StatelessWidget {
         padding: const EdgeInsets.all(16),
         child: Column(
           children: [
-            // PNR Header Card with QR
-            AppCard(
-              padding: const EdgeInsets.all(18),
-              borderRadius: 18,
-              child: Column(
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+            // Physical Perforated Ticket Layout
+            ClipPath(
+              clipper: TicketClipper(punchRadius: 12.0, punchPositionFraction: 0.65),
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.07),
+                      blurRadius: 16,
+                      offset: const Offset(0, 6),
+                    ),
+                  ],
+                ),
+                child: Column(
+                  children: [
+                    // Top Header
+                    Container(
+                      padding: const EdgeInsets.all(20),
+                      decoration: const BoxDecoration(
+                        gradient: AppColors.primaryGradient,
+                      ),
+                      child: Column(
                         children: [
-                          const Text('PNR NUMBER', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
-                          const SizedBox(height: 2),
                           Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Text(
-                                booking.pnr,
-                                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.primary),
+                              Expanded(
+                                child: Text(
+                                  bus?.operatorName ?? 'SmartBus Express',
+                                  style: const TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w800,
+                                    color: Colors.white,
+                                  ),
+                                ),
                               ),
-                              IconButton(
-                                icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.secondary),
-                                onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: booking.pnr));
-                                  Get.snackbar('Copied', 'PNR copied to clipboard', snackPosition: SnackPosition.BOTTOM);
-                                },
+                              StatusBadge(status: booking.bookingStatus),
+                            ],
+                          ),
+                          const SizedBox(height: 14),
+                          Row(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            children: [
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Text(
+                                    'PNR NUMBER',
+                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.7)),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Row(
+                                    children: [
+                                      Text(
+                                        booking.pnr,
+                                        style: const TextStyle(
+                                          fontSize: 22,
+                                          fontWeight: FontWeight.w900,
+                                          color: Colors.white,
+                                          letterSpacing: 1.0,
+                                        ),
+                                      ),
+                                      const SizedBox(width: 6),
+                                      InkWell(
+                                        onTap: () {
+                                          Clipboard.setData(ClipboardData(text: booking.pnr));
+                                          Get.snackbar('Copied', 'PNR copied to clipboard', snackPosition: SnackPosition.BOTTOM);
+                                        },
+                                        child: Container(
+                                          padding: const EdgeInsets.all(4),
+                                          decoration: BoxDecoration(
+                                            color: Colors.white.withValues(alpha: 0.2),
+                                            shape: BoxShape.circle,
+                                          ),
+                                          child: const Icon(Icons.copy_rounded, size: 14, color: Colors.white),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                              Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    'ASSIGNED SEATS',
+                                    style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white.withValues(alpha: 0.7)),
+                                  ),
+                                  const SizedBox(height: 2),
+                                  Text(
+                                    booking.bookingSeats.map((s) => s.seatNumber).join(', '),
+                                    style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w900,
+                                      color: Color(0xFFFDE047),
+                                    ),
+                                  ),
+                                ],
                               ),
                             ],
                           ),
                         ],
                       ),
-                      StatusBadge(status: booking.bookingStatus),
-                    ],
-                  ),
-                  const Divider(height: 1),
-                  const SizedBox(height: 14),
-                  QrImageView(
-                    data: 'SMARTBUS|${booking.pnr}|${booking.tripId}|${booking.totalAmount}',
-                    version: QrVersions.auto,
-                    size: 130.0,
-                    backgroundColor: Colors.white,
-                  ),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Booking Date: ${DateFormatter.toDisplayString(DateTime.parse(booking.bookingDate))}',
-                    style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                  ),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
+                    ),
 
-            // Journey Info Card
-            AppCard(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text(
-                        bus?.operatorName ?? 'SmartBus Express',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                      ),
-                      if (bus != null) StatusBadge(status: bus.busType, fontSize: 10),
-                    ],
-                  ),
-                  const SizedBox(height: 14),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                    // Route details
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(20, 18, 20, 16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text(route?.sourceCity ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                          Text(trip?.departureTime ?? '', style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 4),
-                          Text('Boarding: ${booking.boardingPoint}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
-                        ],
-                      ),
-                      Column(
-                        children: [
-                          const Icon(Icons.arrow_forward_rounded, color: AppColors.secondary),
-                          Text(
-                            DateFormatter.formatDbStringToDisplay(trip?.journeyDate ?? ''),
-                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(route?.sourceCity ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                              Text(trip?.departureTime ?? '', style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 4),
+                              Text('Boarding: ${booking.boardingPoint}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                            ],
+                          ),
+                          Column(
+                            children: [
+                              const Icon(Icons.arrow_forward_rounded, color: AppColors.secondary, size: 22),
+                              Text(
+                                DateFormatter.formatDbStringToDisplay(trip?.journeyDate ?? ''),
+                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: AppColors.textSecondary),
+                              ),
+                            ],
+                          ),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.end,
+                            children: [
+                              Text(route?.destinationCity ?? '', style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800)),
+                              Text(trip?.arrivalTime ?? '', style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w700)),
+                              const SizedBox(height: 4),
+                              Text('Dropping: ${booking.droppingPoint}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                            ],
                           ),
                         ],
                       ),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.end,
+                    ),
+
+                    // Dashed line
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16),
+                      child: CustomPaint(
+                        size: const Size(double.infinity, 1),
+                        painter: DashedLinePainter(dashWidth: 6.0, dashSpace: 5.0),
+                      ),
+                    ),
+
+                    // QR section
+                    Padding(
+                      padding: const EdgeInsets.all(20),
+                      child: Row(
                         children: [
-                          Text(route?.destinationCity ?? '', style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
-                          Text(trip?.arrivalTime ?? '', style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w600)),
-                          const SizedBox(height: 4),
-                          Text('Dropping: ${booking.droppingPoint}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(10),
+                              border: Border.all(color: AppColors.border),
+                            ),
+                            child: QrImageView(
+                              data: 'SMARTBUS|${booking.pnr}|${booking.tripId}|${booking.totalAmount}',
+                              version: QrVersions.auto,
+                              size: 85.0,
+                              backgroundColor: Colors.white,
+                            ),
+                          ),
+                          const SizedBox(width: 16),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const Text('TOTAL PAID', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: AppColors.textTertiary)),
+                                const SizedBox(height: 2),
+                                Text(
+                                  CurrencyFormatter.format(booking.totalAmount),
+                                  style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w900, color: AppColors.primary),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  'Booked on: ${DateFormatter.formatDbStringToDisplay(booking.bookingDate.split("T").first)}',
+                                  style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                                ),
+                              ],
+                            ),
+                          ),
                         ],
                       ),
-                    ],
-                  ),
-                ],
+                    ),
+                  ],
+                ),
               ),
             ),
             const SizedBox(height: 16),
@@ -151,10 +245,11 @@ class BookingDetailsScreen extends StatelessWidget {
             // Passengers & Seats Card
             AppCard(
               padding: const EdgeInsets.all(18),
+              borderRadius: 18,
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Passengers & Assigned Seats', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                  const Text('Passengers & Assigned Seats', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w800)),
                   const SizedBox(height: 12),
                   ...booking.passengers.map((p) {
                     return Padding(
@@ -162,63 +257,22 @@ class BookingDetailsScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('${p.fullName} (${p.age} yrs, ${p.gender})', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                          Text('${p.fullName} (${p.age} yrs, ${p.gender})', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700)),
                           Container(
                             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                             decoration: BoxDecoration(
-                              color: AppColors.secondary.withOpacity(0.12),
+                              color: AppColors.secondary.withValues(alpha: 0.12),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               'Seat ${p.seatNumber}',
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.secondary),
+                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w800, color: AppColors.secondary),
                             ),
                           ),
                         ],
                       ),
                     );
                   }),
-                ],
-              ),
-            ),
-            const SizedBox(height: 16),
-
-            // Payment & Fare Breakdown
-            AppCard(
-              padding: const EdgeInsets.all(18),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Payment Summary', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Base Fare:', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-                      Text(CurrencyFormatter.format(booking.baseFare), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Convenience Fee:', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-                      Text(CurrencyFormatter.format(booking.convenienceFee), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
-                    ],
-                  ),
-                  const SizedBox(height: 10),
-                  const Divider(height: 1),
-                  const SizedBox(height: 10),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      const Text('Total Amount Paid:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
-                      Text(
-                        CurrencyFormatter.format(booking.totalAmount),
-                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: AppColors.secondary),
-                      ),
-                    ],
-                  ),
                 ],
               ),
             ),
@@ -232,7 +286,7 @@ class BookingDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Cancellation Info', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.error)),
+                    const Text('Cancellation Info', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w800, color: AppColors.error)),
                     const SizedBox(height: 6),
                     Text('Reason: ${booking.cancellationReason}', style: const TextStyle(fontSize: 13)),
                     if (booking.cancelledAt != null)
