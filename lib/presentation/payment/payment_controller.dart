@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+
 import '../../data/datasources/preferences_datasource.dart';
 import '../../domain/entities/passenger.dart';
 import '../../domain/entities/seat.dart';
@@ -8,7 +9,8 @@ import '../../domain/usecases/create_booking_usecase.dart';
 import '../../routes/app_routes.dart';
 
 class PaymentController extends GetxController {
-  final CreateBookingUseCase createBookingUseCase = Get.find<CreateBookingUseCase>();
+  final CreateBookingUseCase createBookingUseCase =
+      Get.find<CreateBookingUseCase>();
   final PreferencesDataSource prefs = Get.find<PreferencesDataSource>();
 
   late final TripEntity trip;
@@ -24,7 +26,8 @@ class PaymentController extends GetxController {
 
   // Payment Options
   final RxString selectedMethod = 'UPI'.obs; // 'UPI', 'CARD', 'CASH'
-  final RxBool simulateFailure = false.obs; // Toggle to demonstrate failure handling
+  final RxBool simulateFailure =
+      false.obs; // Toggle to demonstrate failure handling
 
   // Processing state
   final RxBool isProcessing = false.obs;
@@ -117,7 +120,11 @@ class PaymentController extends GetxController {
                   color: Colors.red.shade50,
                   shape: BoxShape.circle,
                 ),
-                child: Icon(Icons.error_outline_rounded, size: 48, color: Colors.red.shade600),
+                child: Icon(
+                  Icons.error_outline_rounded,
+                  size: 48,
+                  color: Colors.red.shade600,
+                ),
               ),
               const SizedBox(height: 18),
               const Text(
@@ -128,7 +135,11 @@ class PaymentController extends GetxController {
               const Text(
                 'The payment could not be processed because simulated failure was enabled. No seats were reserved and no money was charged.',
                 textAlign: TextAlign.center,
-                style: TextStyle(fontSize: 13, color: Colors.black54, height: 1.4),
+                style: TextStyle(
+                  fontSize: 13,
+                  color: Colors.black54,
+                  height: 1.4,
+                ),
               ),
               const SizedBox(height: 24),
               Row(
@@ -137,7 +148,9 @@ class PaymentController extends GetxController {
                     child: OutlinedButton(
                       onPressed: () => Get.back(),
                       style: OutlinedButton.styleFrom(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       child: const Text('Dismiss'),
                     ),
@@ -153,7 +166,9 @@ class PaymentController extends GetxController {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.red.shade600,
                         foregroundColor: Colors.white,
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
                       ),
                       child: const Text('Try Success'),
                     ),
