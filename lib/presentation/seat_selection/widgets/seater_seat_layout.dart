@@ -5,13 +5,13 @@ import 'seat_widget.dart';
 
 class SeaterSeatLayout extends StatelessWidget {
   final List<SeatEntity> seats;
-  final List<SeatEntity> selectedSeats;
+  final Set<int> selectedSeatIds;
   final ValueChanged<SeatEntity> onSeatTap;
 
   const SeaterSeatLayout({
     super.key,
     required this.seats,
-    required this.selectedSeats,
+    required this.selectedSeatIds,
     required this.onSeatTap,
   });
 
@@ -72,7 +72,7 @@ class SeaterSeatLayout extends StatelessWidget {
                 children: [
                   // Left 2 Seats
                   ...leftSeats.map((s) {
-                    final isSelected = selectedSeats.any((sel) => sel.id == s.id);
+                    final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
                       child: SeatWidget(
                         seat: s,
@@ -96,7 +96,7 @@ class SeaterSeatLayout extends StatelessWidget {
                   ),
                   // Right 2 Seats
                   ...rightSeats.map((s) {
-                    final isSelected = selectedSeats.any((sel) => sel.id == s.id);
+                    final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
                       child: SeatWidget(
                         seat: s,

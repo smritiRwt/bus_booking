@@ -5,14 +5,14 @@ import 'seat_widget.dart';
 
 class SleeperSeatLayout extends StatelessWidget {
   final List<SeatEntity> seats;
-  final List<SeatEntity> selectedSeats;
+  final Set<int> selectedSeatIds;
   final ValueChanged<SeatEntity> onSeatTap;
   final String activeDeck; // 'lower' or 'upper'
 
   const SleeperSeatLayout({
     super.key,
     required this.seats,
-    required this.selectedSeats,
+    required this.selectedSeatIds,
     required this.onSeatTap,
     required this.activeDeck,
   });
@@ -74,7 +74,7 @@ class SleeperSeatLayout extends StatelessWidget {
                 children: [
                   // Single Berth on Left
                   ...singleBerth.map((s) {
-                    final isSelected = selectedSeats.any((sel) => sel.id == s.id);
+                    final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
                       flex: 4,
                       child: SeatWidget(
@@ -99,7 +99,7 @@ class SleeperSeatLayout extends StatelessWidget {
                   ),
                   // Double Berths on Right
                   ...doubleBerths.map((s) {
-                    final isSelected = selectedSeats.any((sel) => sel.id == s.id);
+                    final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
                       flex: 4,
                       child: SeatWidget(

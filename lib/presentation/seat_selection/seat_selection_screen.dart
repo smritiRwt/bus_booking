@@ -23,7 +23,7 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
             const Text('Select Seats', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             Text(
               '${controller.trip.bus?.operatorName ?? "Bus"} • Max 6 Seats',
-              style: TextStyle(fontSize: 12, color: Colors.white.withOpacity(0.8)),
+              style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.8)),
             ),
           ],
         ),
@@ -32,6 +32,9 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
         if (controller.isLoading.value) {
           return const Center(child: CircularProgressIndicator(color: AppColors.secondary));
         }
+
+        // Reactively observe selected seat IDs as a Set
+        final selectedIds = controller.selectedSeats.map((s) => s.id).toSet();
 
         return Column(
           children: [
@@ -46,20 +49,16 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
               child: SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: isSleeper
-                    ? Obx(
-                        () => SleeperSeatLayout(
-                          seats: controller.allSeats,
-                          selectedSeats: controller.selectedSeats,
-                          onSeatTap: controller.toggleSeat,
-                          activeDeck: controller.activeDeck.value,
-                        ),
+                    ? SleeperSeatLayout(
+                        seats: controller.allSeats,
+                        selectedSeatIds: selectedIds,
+                        onSeatTap: controller.toggleSeat,
+                        activeDeck: controller.activeDeck.value,
                       )
-                    : Obx(
-                        () => SeaterSeatLayout(
-                          seats: controller.allSeats,
-                          selectedSeats: controller.selectedSeats,
-                          onSeatTap: controller.toggleSeat,
-                        ),
+                    : SeaterSeatLayout(
+                        seats: controller.allSeats,
+                        selectedSeatIds: selectedIds,
+                        onSeatTap: controller.toggleSeat,
                       ),
               ),
             ),
@@ -77,25 +76,30 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildLegendItem('Available', AppColors.seatAvailable, AppColors.seatAvailableBorder),
-          _buildLegendItem('Selected', AppColors.seatSelected, AppColors.seatSelected),
-          _buildLegendItem('Booked', AppColors.seatBooked.withOpacity(0.15), AppColors.seatBooked),
+          _buildLegendItem('Available', Colors.white, const Color(0xFF94A3B8), 1.6),
+          _buildLegendItem('Selected', AppColors.secondary, const Color(0xFF023E8A), 2.5),
+          _buildLegendItem('Booked', const Color(0xFFFEE2E2), const Color(0xFFFCA5A5), 1.5),
         ],
       ),
     );
   }
 
-  Widget _buildLegendItem(String label, Color bgColor, Color borderColor) {
+  Widget _buildLegendItem(String label, Color bgColor, Color borderColor, double borderWidth) {
     return Row(
       children: [
         Container(
-          width: 20,
-          height: 20,
+          width: 22,
+          height: 22,
           decoration: BoxDecoration(
             color: bgColor,
-            borderRadius: BorderRadius.circular(4),
-            border: Border.all(color: borderColor, width: 1.5),
+            borderRadius: BorderRadius.circular(6),
+            border: Border.all(color: borderColor, width: borderWidth),
           ),
+          child: label == 'Selected'
+              ? const Icon(Icons.check_rounded, size: 13, color: Colors.white)
+              : (label == 'Booked'
+                  ? const Icon(Icons.lock_rounded, size: 11, color: Color(0xFFDC2626))
+                  : null),
         ),
         const SizedBox(width: 6),
         Text(
@@ -178,7 +182,7 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
         color: Colors.white,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.08),
+            color: Colors.black.withValues(alpha: 0.08),
             blurRadius: 10,
             offset: const Offset(0, -3),
           ),
