@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
-import '../../../core/widgets/bouncing_widget.dart';
 import '../../../domain/entities/seat.dart';
 import 'animated_driver_cabin.dart';
 import 'seat_widget.dart';
@@ -22,6 +21,7 @@ class SleeperSeatLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Filter seats by active deck
     final deckSeats = seats
         .where((s) => s.deck.toLowerCase() == activeDeck.toLowerCase())
         .toList();
@@ -60,12 +60,8 @@ class SleeperSeatLayout extends StatelessWidget {
             final rowSeats = rowsMap[rowIdx]!;
             rowSeats.sort((a, b) => a.columnIndex.compareTo(b.columnIndex));
 
-            final singleBerth = rowSeats
-                .where((s) => s.columnIndex == 1)
-                .toList();
-            final doubleBerths = rowSeats
-                .where((s) => s.columnIndex > 1)
-                .toList();
+            final singleBerth = rowSeats.where((s) => s.columnIndex == 1).toList();
+            final doubleBerths = rowSeats.where((s) => s.columnIndex > 1).toList();
 
             return Padding(
               padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -76,14 +72,10 @@ class SleeperSeatLayout extends StatelessWidget {
                     final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
                       flex: 4,
-                      child: BouncingWidget(
-                        scaleFactor: 0.94,
+                      child: SeatWidget(
+                        seat: s,
+                        isSelected: isSelected,
                         onTap: () => onSeatTap(s),
-                        child: SeatWidget(
-                          seat: s,
-                          isSelected: isSelected,
-                          onTap: () => onSeatTap(s),
-                        ),
                       ),
                     );
                   }),
@@ -130,14 +122,10 @@ class SleeperSeatLayout extends StatelessWidget {
                     final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
                       flex: 4,
-                      child: BouncingWidget(
-                        scaleFactor: 0.94,
+                      child: SeatWidget(
+                        seat: s,
+                        isSelected: isSelected,
                         onTap: () => onSeatTap(s),
-                        child: SeatWidget(
-                          seat: s,
-                          isSelected: isSelected,
-                          onTap: () => onSeatTap(s),
-                        ),
                       ),
                     );
                   }),

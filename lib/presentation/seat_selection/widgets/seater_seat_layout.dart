@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/constants/app_colors.dart';
-import '../../../core/widgets/bouncing_widget.dart';
 import '../../../domain/entities/seat.dart';
 import 'animated_driver_cabin.dart';
 import 'seat_widget.dart';
@@ -19,6 +19,8 @@ class SeaterSeatLayout extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // 9 Rows of 4 seats (2x2 layout with aisle)
+    // Seats are indexed by rowIndex (1..9) and columnIndex (1..4)
     final rowsMap = <int, List<SeatEntity>>{};
     for (final seat in seats) {
       rowsMap.putIfAbsent(seat.rowIndex, () => []).add(seat);
@@ -53,6 +55,7 @@ class SeaterSeatLayout extends StatelessWidget {
             final rowSeats = rowsMap[rowIdx]!;
             rowSeats.sort((a, b) => a.columnIndex.compareTo(b.columnIndex));
 
+            // Split into Left 2 (col 1, 2) and Right 2 (col 3, 4)
             final leftSeats = rowSeats.where((s) => s.columnIndex <= 2).toList();
             final rightSeats = rowSeats.where((s) => s.columnIndex > 2).toList();
 
@@ -64,14 +67,10 @@ class SeaterSeatLayout extends StatelessWidget {
                   ...leftSeats.map((s) {
                     final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
-                      child: BouncingWidget(
-                        scaleFactor: 0.94,
+                      child: SeatWidget(
+                        seat: s,
+                        isSelected: isSelected,
                         onTap: () => onSeatTap(s),
-                        child: SeatWidget(
-                          seat: s,
-                          isSelected: isSelected,
-                          onTap: () => onSeatTap(s),
-                        ),
                       ),
                     );
                   }),
@@ -117,14 +116,10 @@ class SeaterSeatLayout extends StatelessWidget {
                   ...rightSeats.map((s) {
                     final isSelected = selectedSeatIds.contains(s.id);
                     return Expanded(
-                      child: BouncingWidget(
-                        scaleFactor: 0.94,
+                      child: SeatWidget(
+                        seat: s,
+                        isSelected: isSelected,
                         onTap: () => onSeatTap(s),
-                        child: SeatWidget(
-                          seat: s,
-                          isSelected: isSelected,
-                          onTap: () => onSeatTap(s),
-                        ),
                       ),
                     );
                   }),

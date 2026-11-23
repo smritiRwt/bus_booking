@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:printing/printing.dart';
 import 'package:qr_flutter/qr_flutter.dart';
+
 import '../../core/constants/app_colors.dart';
 import '../../core/utils/currency_formatter.dart';
 import '../../core/utils/date_formatter.dart';
@@ -32,7 +33,10 @@ class BookingDetailsScreen extends StatelessWidget {
             icon: const Icon(Icons.share_rounded),
             onPressed: () async {
               final pdfBytes = await pdfUseCase.generateTicketPdf(booking);
-              await Printing.sharePdf(bytes: pdfBytes, filename: 'Ticket_${booking.pnr}.pdf');
+              await Printing.sharePdf(
+                bytes: pdfBytes,
+                filename: 'Ticket_${booking.pnr}.pdf',
+              );
             },
           ),
         ],
@@ -53,19 +57,40 @@ class BookingDetailsScreen extends StatelessWidget {
                       Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          const Text('PNR NUMBER', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                          const Text(
+                            'PNR NUMBER',
+                            style: TextStyle(
+                              fontSize: 11,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textSecondary,
+                            ),
+                          ),
                           const SizedBox(height: 2),
                           Row(
                             children: [
                               Text(
                                 booking.pnr,
-                                style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w800, color: AppColors.primary),
+                                style: const TextStyle(
+                                  fontSize: 22,
+                                  fontWeight: FontWeight.w800,
+                                  color: AppColors.primary,
+                                ),
                               ),
                               IconButton(
-                                icon: const Icon(Icons.copy_rounded, size: 18, color: AppColors.secondary),
+                                icon: const Icon(
+                                  Icons.copy_rounded,
+                                  size: 18,
+                                  color: AppColors.secondary,
+                                ),
                                 onPressed: () {
-                                  Clipboard.setData(ClipboardData(text: booking.pnr));
-                                  Get.snackbar('Copied', 'PNR copied to clipboard', snackPosition: SnackPosition.BOTTOM);
+                                  Clipboard.setData(
+                                    ClipboardData(text: booking.pnr),
+                                  );
+                                  Get.snackbar(
+                                    'Copied',
+                                    'PNR copied to clipboard',
+                                    snackPosition: SnackPosition.BOTTOM,
+                                  );
                                 },
                               ),
                             ],
@@ -78,7 +103,8 @@ class BookingDetailsScreen extends StatelessWidget {
                   const Divider(height: 1),
                   const SizedBox(height: 14),
                   QrImageView(
-                    data: 'SMARTBUS|${booking.pnr}|${booking.tripId}|${booking.totalAmount}',
+                    data:
+                        'SMARTBUS|${booking.pnr}|${booking.tripId}|${booking.totalAmount}',
                     version: QrVersions.auto,
                     size: 130.0,
                     backgroundColor: Colors.white,
@@ -86,7 +112,10 @@ class BookingDetailsScreen extends StatelessWidget {
                   const SizedBox(height: 8),
                   Text(
                     'Booking Date: ${DateFormatter.toDisplayString(DateTime.parse(booking.bookingDate))}',
-                    style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
+                    style: const TextStyle(
+                      fontSize: 11,
+                      color: AppColors.textSecondary,
+                    ),
                   ),
                 ],
               ),
@@ -102,18 +131,15 @@ class BookingDetailsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Expanded(
-                        child: Text(
-                          bus?.operatorName ?? 'SmartBus Express',
-                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
+                      Text(
+                        bus?.operatorName ?? 'SmartBus Express',
+                        style: const TextStyle(
+                          fontSize: 16,
+                          fontWeight: FontWeight.w700,
                         ),
                       ),
-                      if (bus != null) ...[
-                        const SizedBox(width: 8),
+                      if (bus != null)
                         StatusBadge(status: bus.busType, fontSize: 10),
-                      ],
                     ],
                   ),
                   const SizedBox(height: 14),
@@ -125,14 +151,21 @@ class BookingDetailsScreen extends StatelessWidget {
                           children: [
                             Text(
                               route?.sourceCity ?? '',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                             ),
                             const SizedBox(height: 2),
                             Text(
                               trip?.departureTime ?? '',
-                              style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: AppColors.secondary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -141,10 +174,19 @@ class BookingDetailsScreen extends StatelessWidget {
                         padding: const EdgeInsets.symmetric(horizontal: 8),
                         child: Column(
                           children: [
-                            const Icon(Icons.arrow_forward_rounded, color: AppColors.secondary),
+                            const Icon(
+                              Icons.arrow_forward_rounded,
+                              color: AppColors.secondary,
+                            ),
                             Text(
-                              DateFormatter.formatDbStringToDisplay(trip?.journeyDate ?? ''),
-                              style: const TextStyle(fontSize: 10, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
+                              DateFormatter.formatDbStringToDisplay(
+                                trip?.journeyDate ?? '',
+                              ),
+                              style: const TextStyle(
+                                fontSize: 10,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textSecondary,
+                              ),
                             ),
                           ],
                         ),
@@ -155,7 +197,10 @@ class BookingDetailsScreen extends StatelessWidget {
                           children: [
                             Text(
                               route?.destinationCity ?? '',
-                              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w700,
+                              ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
                               textAlign: TextAlign.end,
@@ -163,7 +208,11 @@ class BookingDetailsScreen extends StatelessWidget {
                             const SizedBox(height: 2),
                             Text(
                               trip?.arrivalTime ?? '',
-                              style: const TextStyle(fontSize: 13, color: AppColors.secondary, fontWeight: FontWeight.w600),
+                              style: const TextStyle(
+                                fontSize: 13,
+                                color: AppColors.secondary,
+                                fontWeight: FontWeight.w600,
+                              ),
                             ),
                           ],
                         ),
@@ -172,7 +221,10 @@ class BookingDetailsScreen extends StatelessWidget {
                   ),
                   const SizedBox(height: 12),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 10,
+                      vertical: 8,
+                    ),
                     decoration: BoxDecoration(
                       color: AppColors.background,
                       borderRadius: BorderRadius.circular(8),
@@ -181,12 +233,20 @@ class BookingDetailsScreen extends StatelessWidget {
                       children: [
                         Row(
                           children: [
-                            const Icon(Icons.trip_origin_rounded, size: 13, color: AppColors.secondary),
+                            const Icon(
+                              Icons.trip_origin_rounded,
+                              size: 13,
+                              color: AppColors.secondary,
+                            ),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 'Boarding: ${booking.boardingPoint}',
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -196,12 +256,20 @@ class BookingDetailsScreen extends StatelessWidget {
                         const SizedBox(height: 4),
                         Row(
                           children: [
-                            const Icon(Icons.location_on_rounded, size: 13, color: AppColors.accent),
+                            const Icon(
+                              Icons.location_on_rounded,
+                              size: 13,
+                              color: AppColors.accent,
+                            ),
                             const SizedBox(width: 6),
                             Expanded(
                               child: Text(
                                 'Dropping: ${booking.droppingPoint}',
-                                style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                                style: const TextStyle(
+                                  fontSize: 11,
+                                  fontWeight: FontWeight.w600,
+                                  color: AppColors.textPrimary,
+                                ),
                                 maxLines: 1,
                                 overflow: TextOverflow.ellipsis,
                               ),
@@ -222,7 +290,10 @@ class BookingDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Passengers & Assigned Seats', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                  const Text(
+                    'Passengers & Assigned Seats',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
                   const SizedBox(height: 12),
                   ...booking.passengers.map((p) {
                     return Padding(
@@ -230,16 +301,31 @@ class BookingDetailsScreen extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
                         children: [
-                          Text('${p.fullName} (${p.age} yrs, ${p.gender})', style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                          Text(
+                            '${p.fullName} (${p.age} yrs, ${p.gender})',
+                            style: const TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
                           Container(
-                            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 10,
+                              vertical: 4,
+                            ),
                             decoration: BoxDecoration(
-                              color: AppColors.secondary.withValues(alpha: 0.12),
+                              color: AppColors.secondary.withValues(
+                                alpha: 0.12,
+                              ),
                               borderRadius: BorderRadius.circular(6),
                             ),
                             child: Text(
                               'Seat ${p.seatNumber}',
-                              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w700, color: AppColors.secondary),
+                              style: const TextStyle(
+                                fontSize: 12,
+                                fontWeight: FontWeight.w700,
+                                color: AppColors.secondary,
+                              ),
                             ),
                           ),
                         ],
@@ -257,21 +343,48 @@ class BookingDetailsScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  const Text('Payment Summary', style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700)),
+                  const Text(
+                    'Payment Summary',
+                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700),
+                  ),
                   const SizedBox(height: 10),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Base Fare:', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-                      Text(CurrencyFormatter.format(booking.baseFare), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                      const Text(
+                        'Base Fare:',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        CurrencyFormatter.format(booking.baseFare),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 6),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Convenience Fee:', style: TextStyle(fontSize: 13, color: AppColors.textSecondary)),
-                      Text(CurrencyFormatter.format(booking.convenienceFee), style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600)),
+                      const Text(
+                        'Convenience Fee:',
+                        style: TextStyle(
+                          fontSize: 13,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
+                      Text(
+                        CurrencyFormatter.format(booking.convenienceFee),
+                        style: const TextStyle(
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                     ],
                   ),
                   const SizedBox(height: 10),
@@ -280,10 +393,20 @@ class BookingDetailsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      const Text('Total Amount Paid:', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700)),
+                      const Text(
+                        'Total Amount Paid:',
+                        style: TextStyle(
+                          fontSize: 14,
+                          fontWeight: FontWeight.w700,
+                        ),
+                      ),
                       Text(
                         CurrencyFormatter.format(booking.totalAmount),
-                        style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w800, color: AppColors.secondary),
+                        style: const TextStyle(
+                          fontSize: 17,
+                          fontWeight: FontWeight.w800,
+                          color: AppColors.secondary,
+                        ),
                       ),
                     ],
                   ),
@@ -300,11 +423,27 @@ class BookingDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    const Text('Cancellation Info', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.error)),
+                    const Text(
+                      'Cancellation Info',
+                      style: TextStyle(
+                        fontSize: 14,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.error,
+                      ),
+                    ),
                     const SizedBox(height: 6),
-                    Text('Reason: ${booking.cancellationReason}', style: const TextStyle(fontSize: 13)),
+                    Text(
+                      'Reason: ${booking.cancellationReason}',
+                      style: const TextStyle(fontSize: 13),
+                    ),
                     if (booking.cancelledAt != null)
-                      Text('Cancelled on: ${DateFormatter.toDisplayString(DateTime.parse(booking.cancelledAt!))}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                      Text(
+                        'Cancelled on: ${DateFormatter.toDisplayString(DateTime.parse(booking.cancelledAt!))}',
+                        style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textSecondary,
+                        ),
+                      ),
                   ],
                 ),
               ),
