@@ -6,12 +6,10 @@ import '../../domain/usecases/cancel_booking_usecase.dart';
 import '../../domain/usecases/get_user_bookings_usecase.dart';
 import '../../routes/app_routes.dart';
 
-class MyBookingsController extends GetxController with GetSingleTickerProviderStateMixin {
+class MyBookingsController extends GetxController {
   final GetUserBookingsUseCase getBookingsUseCase = Get.find<GetUserBookingsUseCase>();
   final CancelBookingUseCase cancelBookingUseCase = Get.find<CancelBookingUseCase>();
   final PreferencesDataSource prefs = Get.find<PreferencesDataSource>();
-
-  late TabController tabController;
 
   final RxList<BookingEntity> allBookings = <BookingEntity>[].obs;
   final RxBool isLoading = true.obs;
@@ -23,13 +21,11 @@ class MyBookingsController extends GetxController with GetSingleTickerProviderSt
   @override
   void onInit() {
     super.onInit();
-    tabController = TabController(length: 3, vsync: this);
     loadBookings();
   }
 
   @override
   void onClose() {
-    tabController.dispose();
     searchPnrController.dispose();
     super.onClose();
   }

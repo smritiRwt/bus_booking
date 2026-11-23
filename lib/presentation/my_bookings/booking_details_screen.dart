@@ -102,11 +102,18 @@ class BookingDetailsScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text(
-                        bus?.operatorName ?? 'SmartBus Express',
-                        style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                      Expanded(
+                        child: Text(
+                          bus?.operatorName ?? 'SmartBus Express',
+                          style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w700),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                      if (bus != null) StatusBadge(status: bus.busType, fontSize: 10),
+                      if (bus != null) ...[
+                        const SizedBox(width: 8),
+                        StatusBadge(status: bus.busType, fontSize: 10),
+                      ],
                     ],
                   ),
                   const SizedBox(height: 14),

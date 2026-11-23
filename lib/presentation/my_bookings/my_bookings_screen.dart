@@ -18,69 +18,70 @@ class MyBookingsScreen extends GetView<MyBookingsController> {
   Widget build(BuildContext context) {
     final controller = Get.put(MyBookingsController());
 
-    return Scaffold(
-      backgroundColor: AppColors.background,
-      appBar: AppBar(
-        title: const Text('My Bookings'),
-        bottom: TabBar(
-          controller: controller.tabController,
-          labelColor: AppColors.secondary,
-          unselectedLabelColor: AppColors.textSecondary,
-          indicatorColor: AppColors.secondary,
-          labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
-          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
-          indicatorWeight: 3,
-          tabs: const [
-            Tab(text: 'Upcoming'),
-            Tab(text: 'Completed'),
-            Tab(text: 'Cancelled'),
-          ],
+    return DefaultTabController(
+      length: 3,
+      child: Scaffold(
+        backgroundColor: AppColors.background,
+        appBar: AppBar(
+          title: const Text('My Bookings'),
+          bottom: const TabBar(
+            labelColor: AppColors.secondary,
+            unselectedLabelColor: AppColors.textSecondary,
+            indicatorColor: AppColors.secondary,
+            labelStyle: TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+            unselectedLabelStyle: TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
+            indicatorWeight: 3,
+            tabs: [
+              Tab(text: 'Upcoming'),
+              Tab(text: 'Completed'),
+              Tab(text: 'Cancelled'),
+            ],
+          ),
         ),
-      ),
-      body: Column(
-        children: [
-          // PNR Search Bar
-          Container(
-            color: Colors.white,
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: controller.searchPnrController,
-              onChanged: (val) => controller.searchPnrQuery.value = val,
-              decoration: InputDecoration(
-                hintText: 'Search by PNR (e.g. SB-682491)',
-                prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppColors.secondary),
-                suffixIcon: Obx(
-                  () => controller.searchPnrQuery.value.isNotEmpty
-                      ? IconButton(
-                          icon: const Icon(Icons.clear_rounded, size: 18),
-                          onPressed: () {
-                            controller.searchPnrController.clear();
-                            controller.searchPnrQuery.value = '';
-                          },
-                        )
-                      : const SizedBox.shrink(),
-                ),
-                contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-                filled: true,
-                fillColor: AppColors.background,
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(10),
-                  borderSide: BorderSide.none,
+        body: Column(
+          children: [
+            // PNR Search Bar
+            Container(
+              color: Colors.white,
+              padding: const EdgeInsets.all(12),
+              child: TextField(
+                controller: controller.searchPnrController,
+                onChanged: (val) => controller.searchPnrQuery.value = val,
+                decoration: InputDecoration(
+                  hintText: 'Search by PNR (e.g. SB-682491)',
+                  prefixIcon: const Icon(Icons.search_rounded, size: 20, color: AppColors.secondary),
+                  suffixIcon: Obx(
+                    () => controller.searchPnrQuery.value.isNotEmpty
+                        ? IconButton(
+                            icon: const Icon(Icons.clear_rounded, size: 18),
+                            onPressed: () {
+                              controller.searchPnrController.clear();
+                              controller.searchPnrQuery.value = '';
+                            },
+                          )
+                        : const SizedBox.shrink(),
+                  ),
+                  contentPadding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+                  filled: true,
+                  fillColor: AppColors.background,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10),
+                    borderSide: BorderSide.none,
+                  ),
                 ),
               ),
             ),
-          ),
-          Expanded(
-            child: TabBarView(
-              controller: controller.tabController,
-              children: [
-                _buildBookingsList(controller, controller.upcomingBookings, 'upcoming'),
-                _buildBookingsList(controller, controller.completedBookings, 'completed'),
-                _buildBookingsList(controller, controller.cancelledBookings, 'cancelled'),
-              ],
+            Expanded(
+              child: TabBarView(
+                children: [
+                  _buildBookingsList(controller, controller.upcomingBookings, 'upcoming'),
+                  _buildBookingsList(controller, controller.completedBookings, 'completed'),
+                  _buildBookingsList(controller, controller.cancelledBookings, 'cancelled'),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
