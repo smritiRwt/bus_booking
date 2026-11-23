@@ -1,4 +1,5 @@
 import 'package:get/get.dart';
+
 import '../../core/utils/date_formatter.dart';
 import '../../domain/entities/trip.dart';
 import '../../domain/repositories/bus_repository.dart';
@@ -20,8 +21,10 @@ class SearchBusController extends GetxController {
   // Filter States
   final RxnBool filterAc = RxnBool();
   final RxnBool filterSleeper = RxnBool();
-  final RxString sortBy = 'departure_asc'.obs; // 'price_asc', 'price_desc', 'rating_desc', 'departure_asc'
-  final RxString departureSlot = ''.obs; // 'morning', 'afternoon', 'evening', 'night'
+  final RxString sortBy = 'departure_asc'
+      .obs; // 'price_asc', 'price_desc', 'rating_desc', 'departure_asc'
+  final RxString departureSlot =
+      ''.obs; // 'morning', 'afternoon', 'evening', 'night'
   final RxDouble minRating = 0.0.obs;
 
   @override
@@ -34,7 +37,9 @@ class SearchBusController extends GetxController {
     if (args['journeyDateTime'] is DateTime) {
       selectedDate.value = args['journeyDateTime'] as DateTime;
     } else if (args['journeyDate'] is String) {
-      selectedDate.value = DateFormatter.fromDbString(args['journeyDate'] as String);
+      selectedDate.value = DateFormatter.fromDbString(
+        args['journeyDate'] as String,
+      );
     }
 
     fetchTrips();
@@ -49,7 +54,9 @@ class SearchBusController extends GetxController {
         isAc: filterAc.value,
         isSleeper: filterSleeper.value,
         sortBy: sortBy.value,
-        departureTimeSlot: departureSlot.value.isEmpty ? null : departureSlot.value,
+        departureTimeSlot: departureSlot.value.isEmpty
+            ? null
+            : departureSlot.value,
         minRating: minRating.value > 0 ? minRating.value : null,
       );
 

@@ -61,7 +61,9 @@ void main() {
   });
 
   group('SmartBus UI Components Widget Tests', () {
-    testWidgets('CustomButton renders text and triggers callback', (WidgetTester tester) async {
+    testWidgets('CustomButton renders text and triggers callback', (
+      WidgetTester tester,
+    ) async {
       bool tapped = false;
       await tester.pumpWidget(
         MaterialApp(
@@ -79,12 +81,12 @@ void main() {
       expect(tapped, isTrue);
     });
 
-    testWidgets('StatusBadge displays CONFIRMED status with checkmark', (WidgetTester tester) async {
+    testWidgets('StatusBadge displays CONFIRMED status with checkmark', (
+      WidgetTester tester,
+    ) async {
       await tester.pumpWidget(
         const MaterialApp(
-          home: Scaffold(
-            body: StatusBadge(status: 'CONFIRMED'),
-          ),
+          home: Scaffold(body: StatusBadge(status: 'CONFIRMED')),
         ),
       );
 
@@ -92,7 +94,9 @@ void main() {
       expect(find.byIcon(Icons.check_circle_rounded), findsOneWidget);
     });
 
-    testWidgets('AppCard renders child and responds to tap', (WidgetTester tester) async {
+    testWidgets('AppCard renders child and responds to tap', (
+      WidgetTester tester,
+    ) async {
       bool cardTapped = false;
       await tester.pumpWidget(
         MaterialApp(

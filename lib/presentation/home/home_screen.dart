@@ -613,57 +613,68 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           ),
                           const SizedBox(height: 14),
                           Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             children: [
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Text(
-                                    route?.sourceCity ?? 'Origin',
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    trip?.departureTime ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.secondary,
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      route?.sourceCity ?? 'Origin',
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
                                     ),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                children: [
-                                  const Icon(Icons.directions_bus_rounded, color: AppColors.secondary, size: 20),
-                                  Container(
-                                    width: 50,
-                                    height: 1.5,
-                                    color: AppColors.secondary.withValues(alpha: 0.4),
-                                  ),
-                                  Text(
-                                    route?.estimatedDuration ?? '~5h',
-                                    style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
-                                  ),
-                                ],
-                              ),
-                              Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    route?.destinationCity ?? 'Destination',
-                                    style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
-                                  ),
-                                  const SizedBox(height: 2),
-                                  Text(
-                                    trip?.arrivalTime ?? '',
-                                    style: const TextStyle(
-                                      fontSize: 13,
-                                      fontWeight: FontWeight.w700,
-                                      color: AppColors.secondary,
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      trip?.departureTime ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.secondary,
+                                      ),
                                     ),
-                                  ),
-                                ],
+                                  ],
+                                ),
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: 6),
+                                child: Column(
+                                  children: [
+                                    const Icon(Icons.directions_bus_rounded, color: AppColors.secondary, size: 20),
+                                    Container(
+                                      width: 50,
+                                      height: 1.5,
+                                      color: AppColors.secondary.withValues(alpha: 0.4),
+                                    ),
+                                    Text(
+                                      route?.estimatedDuration ?? '~5h',
+                                      style: const TextStyle(fontSize: 10, color: AppColors.textSecondary),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    Text(
+                                      route?.destinationCity ?? 'Destination',
+                                      style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w800),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      textAlign: TextAlign.end,
+                                    ),
+                                    const SizedBox(height: 2),
+                                    Text(
+                                      trip?.arrivalTime ?? '',
+                                      style: const TextStyle(
+                                        fontSize: 13,
+                                        fontWeight: FontWeight.w700,
+                                        color: AppColors.secondary,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ),
                             ],
                           ),

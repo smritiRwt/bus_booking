@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
 import '../../../domain/entities/seat.dart';
@@ -87,7 +88,9 @@ class SeatWidget extends StatelessWidget {
               decoration: BoxDecoration(
                 color: isSelected
                     ? Colors.white.withValues(alpha: 0.8)
-                    : (seat.isBooked ? const Color(0xFFFCA5A5) : const Color(0xFFCBD5E1)),
+                    : (seat.isBooked
+                          ? const Color(0xFFFCA5A5)
+                          : const Color(0xFFCBD5E1)),
                 borderRadius: BorderRadius.circular(3),
               ),
             ),
@@ -96,7 +99,11 @@ class SeatWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (seat.isBooked) ...[
-                  const Icon(Icons.lock_rounded, size: 12, color: Color(0xFFDC2626)),
+                  const Icon(
+                    Icons.lock_rounded,
+                    size: 12,
+                    color: Color(0xFFDC2626),
+                  ),
                   const SizedBox(width: 3),
                   Text(
                     seat.seatNumber,
@@ -107,7 +114,11 @@ class SeatWidget extends StatelessWidget {
                     ),
                   ),
                 ] else if (isSelected) ...[
-                  const Icon(Icons.check_circle_rounded, size: 13, color: Colors.white),
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    size: 13,
+                    color: Colors.white,
+                  ),
                   const SizedBox(width: 3),
                   Text(
                     seat.seatNumber,
@@ -137,7 +148,9 @@ class SeatWidget extends StatelessWidget {
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 color: isSelected
                     ? Colors.white
-                    : (seat.isBooked ? const Color(0xFFDC2626) : AppColors.textSecondary),
+                    : (seat.isBooked
+                          ? const Color(0xFFDC2626)
+                          : AppColors.textSecondary),
               ),
             ),
           ],
@@ -207,7 +220,11 @@ class SeatWidget extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 if (seat.isBooked) ...[
-                  const Icon(Icons.lock_rounded, size: 12, color: Color(0xFFDC2626)),
+                  const Icon(
+                    Icons.lock_rounded,
+                    size: 12,
+                    color: Color(0xFFDC2626),
+                  ),
                   const SizedBox(width: 3),
                   Text(
                     seat.seatNumber,
@@ -218,7 +235,11 @@ class SeatWidget extends StatelessWidget {
                     ),
                   ),
                 ] else if (isSelected) ...[
-                  const Icon(Icons.check_circle_rounded, size: 13, color: Colors.white),
+                  const Icon(
+                    Icons.check_circle_rounded,
+                    size: 13,
+                    color: Colors.white,
+                  ),
                   const SizedBox(width: 3),
                   Text(
                     seat.seatNumber,
@@ -247,7 +268,9 @@ class SeatWidget extends StatelessWidget {
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
                 color: isSelected
                     ? Colors.white
-                    : (seat.isBooked ? const Color(0xFFDC2626) : AppColors.textSecondary),
+                    : (seat.isBooked
+                          ? const Color(0xFFDC2626)
+                          : AppColors.textSecondary),
               ),
             ),
           ],
