@@ -198,7 +198,7 @@ class _FilterBottomSheetState extends State<FilterBottomSheet> {
       child: Container(
         padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
         decoration: BoxDecoration(
-          color: isSelected ? AppColors.secondary.withOpacity(0.12) : Colors.grey.shade100,
+          color: isSelected ? AppColors.secondary.withValues(alpha: 0.12) : Colors.grey.shade100,
           borderRadius: BorderRadius.circular(8),
           border: Border.all(
             color: isSelected ? AppColors.secondary : Colors.transparent,

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_colors.dart';
 import '../../../core/utils/currency_formatter.dart';
+import '../../../core/widgets/bouncing_widget.dart';
 import '../../../domain/entities/seat.dart';
 
 class SeatWidget extends StatelessWidget {
@@ -32,40 +33,39 @@ class SeatWidget extends StatelessWidget {
     List<BoxShadow>? shadows;
 
     if (seat.isBooked) {
-      bgColor = const Color(0xFFFEE2E2);
+      bgColor = const Color(0xFFFEE2E2); // Light pastel rose
       borderColor = const Color(0xFFFCA5A5);
-      borderWidth = 1.5;
+      borderWidth = 1.2;
       textColor = const Color(0xFFDC2626);
       shadows = null;
     } else if (isSelected) {
-      bgColor = AppColors.secondary;
-      borderColor = const Color(0xFF023E8A);
-      borderWidth = 2.5;
+      bgColor = AppColors.seatSelected;
+      borderColor = AppColors.seatSelectedBorder;
+      borderWidth = 2.4;
       textColor = Colors.white;
       shadows = [
         BoxShadow(
-          color: AppColors.secondary.withValues(alpha: 0.4),
+          color: AppColors.seatSelected.withValues(alpha: 0.35),
           blurRadius: 8,
           offset: const Offset(0, 3),
         ),
       ];
     } else {
       bgColor = Colors.white;
-      borderColor = const Color(0xFF94A3B8);
-      borderWidth = 1.6;
+      borderColor = AppColors.seatAvailableBorder;
+      borderWidth = 1.4;
       textColor = AppColors.textPrimary;
       shadows = [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
+          color: const Color(0xFF0F172A).withValues(alpha: 0.03),
           blurRadius: 4,
           offset: const Offset(0, 1),
         ),
       ];
     }
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+    return BouncingWidget(
+      onTap: seat.isBooked ? null : onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeInOut,
@@ -122,10 +122,10 @@ class SeatWidget extends StatelessWidget {
                   const SizedBox(width: 3),
                   Text(
                     seat.seatNumber,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: textColor,
                     ),
                   ),
                 ] else ...[
@@ -140,9 +140,9 @@ class SeatWidget extends StatelessWidget {
                 ],
               ],
             ),
-            // Bottom Price / Booked label
+            // Bottom price indicator
             Text(
-              seat.isBooked ? 'Booked' : CurrencyFormatter.format(seat.price),
+              CurrencyFormatter.format(seat.price),
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,
@@ -167,46 +167,46 @@ class SeatWidget extends StatelessWidget {
     List<BoxShadow>? shadows;
 
     if (seat.isBooked) {
-      bgColor = const Color(0xFFFEE2E2);
+      bgColor = const Color(0xFFFEE2E2); // Light pastel rose
       borderColor = const Color(0xFFFCA5A5);
-      borderWidth = 1.5;
+      borderWidth = 1.2;
       textColor = const Color(0xFFDC2626);
       shadows = null;
     } else if (isSelected) {
-      bgColor = AppColors.secondary;
-      borderColor = const Color(0xFF023E8A);
-      borderWidth = 2.5;
+      bgColor = AppColors.seatSelected;
+      borderColor = AppColors.seatSelectedBorder;
+      borderWidth = 2.4;
       textColor = Colors.white;
       shadows = [
         BoxShadow(
-          color: AppColors.secondary.withValues(alpha: 0.4),
+          color: AppColors.seatSelected.withValues(alpha: 0.35),
           blurRadius: 8,
           offset: const Offset(0, 3),
         ),
       ];
     } else {
       bgColor = Colors.white;
-      borderColor = const Color(0xFF94A3B8);
-      borderWidth = 1.6;
+      borderColor = AppColors.seatAvailableBorder;
+      borderWidth = 1.4;
       textColor = AppColors.textPrimary;
       shadows = [
         BoxShadow(
-          color: Colors.black.withValues(alpha: 0.03),
+          color: const Color(0xFF0F172A).withValues(alpha: 0.03),
           blurRadius: 4,
           offset: const Offset(0, 1),
         ),
       ];
     }
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(10),
+    return BouncingWidget(
+      onTap: seat.isBooked ? null : onTap,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
         curve: Curves.easeInOut,
-        height: 56,
+        width: 52,
+        height: 54,
         margin: const EdgeInsets.all(4),
-        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+        padding: const EdgeInsets.all(4),
         decoration: BoxDecoration(
           color: bgColor,
           borderRadius: BorderRadius.circular(10),
@@ -216,6 +216,20 @@ class SeatWidget extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
+            // Headrest indicator
+            Container(
+              width: 22,
+              height: 4,
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? Colors.white.withValues(alpha: 0.8)
+                    : (seat.isBooked
+                          ? const Color(0xFFFCA5A5)
+                          : const Color(0xFFCBD5E1)),
+                borderRadius: BorderRadius.circular(2),
+              ),
+            ),
+            // Center info
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -243,10 +257,10 @@ class SeatWidget extends StatelessWidget {
                   const SizedBox(width: 3),
                   Text(
                     seat.seatNumber,
-                    style: const TextStyle(
-                      fontSize: 12,
+                    style: TextStyle(
+                      fontSize: 11,
                       fontWeight: FontWeight.w800,
-                      color: Colors.white,
+                      color: textColor,
                     ),
                   ),
                 ] else ...[
@@ -261,8 +275,9 @@ class SeatWidget extends StatelessWidget {
                 ],
               ],
             ),
+            // Bottom price indicator
             Text(
-              seat.isBooked ? 'Booked' : CurrencyFormatter.format(seat.price),
+              CurrencyFormatter.format(seat.price),
               style: TextStyle(
                 fontSize: 9,
                 fontWeight: isSelected ? FontWeight.w800 : FontWeight.w600,

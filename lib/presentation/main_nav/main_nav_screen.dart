@@ -30,7 +30,7 @@ class MainNavScreen extends StatelessWidget {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.06),
+                color: Colors.black.withValues(alpha: 0.05),
                 blurRadius: 16,
                 offset: const Offset(0, -4),
               ),
@@ -40,7 +40,7 @@ class MainNavScreen extends StatelessWidget {
             selectedIndex: controller.currentIndex.value,
             onDestinationSelected: controller.changeTab,
             backgroundColor: Colors.white,
-            indicatorColor: AppColors.secondary.withOpacity(0.12),
+            indicatorColor: AppColors.secondary.withValues(alpha: 0.12),
             elevation: 0,
             height: 68,
             labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,

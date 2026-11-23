@@ -30,10 +30,10 @@ class SearchScreen extends GetView<SearchBusController> {
             Obx(
               () => Text(
                 DateFormatter.toDisplayString(controller.selectedDate.value),
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 12,
-                  fontWeight: FontWeight.w400,
-                  color: Colors.white.withOpacity(0.8),
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.secondary,
                 ),
               ),
             ),
@@ -98,7 +98,7 @@ class SearchScreen extends GetView<SearchBusController> {
                 child: ListView.separated(
                   padding: const EdgeInsets.all(16),
                   itemCount: controller.trips.length,
-                  separatorBuilder: (_, __) => const SizedBox(height: 12),
+                  separatorBuilder: (context, index) => const SizedBox(height: 12),
                   itemBuilder: (context, index) {
                     final trip = controller.trips[index];
                     return StaggeredFadeSlide(
@@ -223,7 +223,7 @@ class SearchScreen extends GetView<SearchBusController> {
                   vertical: 6,
                 ),
                 decoration: BoxDecoration(
-                  color: AppColors.primary.withOpacity(0.08),
+                  color: AppColors.secondary.withValues(alpha: 0.1),
                   borderRadius: BorderRadius.circular(20),
                 ),
                 child: Row(
@@ -231,7 +231,7 @@ class SearchScreen extends GetView<SearchBusController> {
                     Icon(
                       Icons.filter_list_rounded,
                       size: 16,
-                      color: AppColors.primary,
+                      color: AppColors.secondary,
                     ),
                     SizedBox(width: 4),
                     Text(

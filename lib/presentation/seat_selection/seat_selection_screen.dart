@@ -23,7 +23,7 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
             const Text('Select Seats', style: TextStyle(fontSize: 16, fontWeight: FontWeight.w700)),
             Text(
               '${controller.trip.bus?.operatorName ?? "Bus"} • Max 6 Seats',
-              style: TextStyle(fontSize: 12, color: Colors.white.withValues(alpha: 0.8)),
+              style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.secondary),
             ),
           ],
         ),
@@ -76,9 +76,9 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
-          _buildLegendItem('Available', Colors.white, const Color(0xFF94A3B8), 1.6),
-          _buildLegendItem('Selected', AppColors.secondary, const Color(0xFF023E8A), 2.5),
-          _buildLegendItem('Booked', const Color(0xFFFEE2E2), const Color(0xFFFCA5A5), 1.5),
+          _buildLegendItem('Available', Colors.white, const Color(0xFFCBD5E1), 1.4),
+          _buildLegendItem('Selected', AppColors.seatSelected, AppColors.seatSelectedBorder, 2.4),
+          _buildLegendItem('Booked', const Color(0xFFFEE2E2), const Color(0xFFFCA5A5), 1.2),
         ],
       ),
     );
@@ -126,7 +126,9 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
                 child: InkWell(
                   onTap: () => controller.activeDeck.value = 'lower',
                   borderRadius: BorderRadius.circular(10),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
                       color: controller.activeDeck.value == 'lower' ? AppColors.secondary : Colors.transparent,
@@ -149,7 +151,9 @@ class SeatSelectionScreen extends GetView<SeatSelectionController> {
                 child: InkWell(
                   onTap: () => controller.activeDeck.value = 'upper',
                   borderRadius: BorderRadius.circular(10),
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 200),
+                    curve: Curves.easeInOut,
                     padding: const EdgeInsets.symmetric(vertical: 8),
                     decoration: BoxDecoration(
                       color: controller.activeDeck.value == 'upper' ? AppColors.secondary : Colors.transparent,

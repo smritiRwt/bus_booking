@@ -24,9 +24,11 @@ class MyBookingsScreen extends GetView<MyBookingsController> {
         title: const Text('My Bookings'),
         bottom: TabBar(
           controller: controller.tabController,
-          labelColor: Colors.white,
-          unselectedLabelColor: Colors.white.withValues(alpha: 0.6),
-          indicatorColor: AppColors.accent,
+          labelColor: AppColors.secondary,
+          unselectedLabelColor: AppColors.textSecondary,
+          indicatorColor: AppColors.secondary,
+          labelStyle: const TextStyle(fontWeight: FontWeight.w800, fontSize: 14),
+          unselectedLabelStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14),
           indicatorWeight: 3,
           tabs: const [
             Tab(text: 'Upcoming'),
@@ -115,7 +117,7 @@ class MyBookingsScreen extends GetView<MyBookingsController> {
         child: ListView.separated(
           padding: const EdgeInsets.all(16),
           itemCount: bookings.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 14),
+          separatorBuilder: (context, index) => const SizedBox(height: 14),
           itemBuilder: (context, index) {
             final booking = bookings[index];
             return StaggeredFadeSlide(

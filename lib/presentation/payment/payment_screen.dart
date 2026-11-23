@@ -88,7 +88,7 @@ class PaymentScreen extends GetView<PaymentController> {
             color: Colors.white,
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withOpacity(0.08),
+                color: Colors.black.withValues(alpha: 0.08),
                 blurRadius: 10,
                 offset: const Offset(0, -3),
               ),
@@ -155,7 +155,7 @@ class PaymentScreen extends GetView<PaymentController> {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: AppColors.secondary.withOpacity(0.12),
+              color: AppColors.secondary.withValues(alpha: 0.12),
               borderRadius: BorderRadius.circular(8),
             ),
             child: Text(
@@ -186,7 +186,7 @@ class PaymentScreen extends GetView<PaymentController> {
           color: isSelected ? AppColors.secondary : AppColors.border,
           width: isSelected ? 1.8 : 1,
         ),
-        color: isSelected ? AppColors.secondary.withOpacity(0.04) : Colors.white,
+        color: isSelected ? AppColors.secondary.withValues(alpha: 0.04) : Colors.white,
         child: Row(
           children: [
             Container(
@@ -336,7 +336,7 @@ class PaymentScreen extends GetView<PaymentController> {
             ),
             Switch(
               value: controller.simulateFailure.value,
-              activeColor: Colors.red.shade700,
+              activeThumbColor: Colors.red.shade700,
               onChanged: (val) => controller.simulateFailure.value = val,
             ),
           ],
@@ -357,7 +357,7 @@ class PaymentScreen extends GetView<PaymentController> {
               height: 90,
               padding: const EdgeInsets.all(20),
               decoration: BoxDecoration(
-                color: AppColors.secondary.withOpacity(0.1),
+                color: AppColors.secondary.withValues(alpha: 0.1),
                 shape: BoxShape.circle,
               ),
               child: const CircularProgressIndicator(

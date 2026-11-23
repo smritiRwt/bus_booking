@@ -502,7 +502,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               Expanded(
                 child: ListView.separated(
                   itemCount: cities.length,
-                  separatorBuilder: (_, __) => const Divider(height: 1),
+                  separatorBuilder: (context, index) => const Divider(height: 1),
                   itemBuilder: (context, index) {
                     final city = cities[index];
                     return ListTile(
@@ -850,7 +850,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
           itemCount: routes.length,
-          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          separatorBuilder: (context, index) => const SizedBox(height: 10),
           itemBuilder: (context, index) {
             final r = routes[index];
             return BouncingWidget(

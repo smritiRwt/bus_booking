@@ -144,7 +144,7 @@ class BusDetailsScreen extends GetView<BusDetailsController> {
                             style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
                           ),
                           const SizedBox(height: 4),
-                          Container(width: 80, height: 2, color: AppColors.secondary.withOpacity(0.5)),
+                          Container(width: 80, height: 2, color: AppColors.secondary.withValues(alpha: 0.5)),
                           const SizedBox(height: 4),
                           Text(
                             '${route?.distanceKm.toInt() ?? 250} km',
@@ -274,7 +274,7 @@ class BusDetailsScreen extends GetView<BusDetailsController> {
           color: Colors.white,
           boxShadow: [
             BoxShadow(
-              color: Colors.black.withOpacity(0.08),
+              color: Colors.black.withValues(alpha: 0.08),
               blurRadius: 10,
               offset: const Offset(0, -3),
             ),
