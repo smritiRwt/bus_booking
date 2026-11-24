@@ -23,10 +23,6 @@
 |:---:|:---:|:---:|
 | <img src="screenshots/seat_selection_screen.png" width="260" alt="Sleeper Layout" /> | <img src="screenshots/seat_selected.png" width="260" alt="Seat Selected" /> | <img src="screenshots/seat_selection_screen_2.png" width="260" alt="Seater Layout" /> |
 
-| Passenger Details | Boarding Pass Summary |
-|:---:|:---:|
-| <img src="screenshots/passenger_details.png" width="260" alt="Passenger Details" /> | <img src="screenshots/summary_screen.png" width="260" alt="Booking Summary" /> |
-
 ---
 
 ## 🌟 Key Features
