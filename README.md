@@ -13,6 +13,22 @@
 
 ---
 
+## 📱 App Screenshots
+
+| Home Dashboard | Mystery Deal Revealed | Bus Search & Filters |
+|:---:|:---:|:---:|
+| <img src="screenshots/home_screen.png" width="260" alt="Home Screen" /> | <img src="screenshots/revealed_voucher.png" width="260" alt="Mystery Deal" /> | <img src="screenshots/search_screen.png" width="260" alt="Search Screen" /> |
+
+| Sleeper Deck Selection | Interactive Selected State | 2x2 Seater Bus Layout |
+|:---:|:---:|:---:|
+| <img src="screenshots/seat_selection_screen.png" width="260" alt="Sleeper Layout" /> | <img src="screenshots/seat_selected.png" width="260" alt="Seat Selected" /> | <img src="screenshots/seat_selection_screen_2.png" width="260" alt="Seater Layout" /> |
+
+| Passenger Details | Boarding Pass Summary |
+|:---:|:---:|
+| <img src="screenshots/passenger_details.png" width="260" alt="Passenger Details" /> | <img src="screenshots/summary_screen.png" width="260" alt="Booking Summary" /> |
+
+---
+
 ## 🌟 Key Features
 
 ### 1. 🚀 Splash & Onboarding
@@ -20,10 +36,12 @@
 - Automatic SQLite database warm-up and seeding on first launch.
 
 ### 2. 🏠 Modern Travel Dashboard (Home Screen)
+- **Interactive Live Highway Bus (`AnimatedBusRoad`)**: Moving road lines, drifting daylight clouds, suspension hover, and **Tap-to-Honk** (*"Beep Beep! 📢"*).
+- **Gamified Mystery Discount Card (`MysteryDiscountCard`)**: Tap-to-unlock welcome travel voucher that auto-applies ₹150 discount to the total fare.
 - **City Selectors**: Popular Indian city routes (Delhi, Chandigarh, Jaipur, Amritsar, Ludhiana, Manali, Shimla, Dehradun, Jalandhar).
-- **Source-Destination Swap**: Smooth rotate-and-swap animation for instant return route lookup.
+- **Source-Destination Swap**: 180° smooth spring rotate-and-swap animation for instant return route lookup.
 - **Date Picker**: Quick chips for **Today** and **Tomorrow** plus an interactive Material calendar.
-- **Active Trip Widget**: Displays upcoming journeys with PNR, seats, and one-tap ticket preview.
+- **Upcoming Boarding Pass**: Perforated physical pass preview with circular hole notches and dashed tear-off perforation line.
 - **Popular Destinations & Routes**: One-click quick-booking shortcuts.
 
 ### 3. 🔍 Bus Search & Dynamic Filtering
@@ -34,15 +52,18 @@
   - Layout format: Sleeper vs Seater.
   - Sorting: Price (Low/High), Rating (Highest First), Earliest Departure.
   - Departure window: Morning, Afternoon, Evening, Night.
+- **Interactive Bus Cards**: Smooth accordion drawer displaying boarding/dropping stops and amenities right inside each card.
 - Quick date switch bar to explore adjacent travel days.
 
 ### 4. 💺 Interactive Visual Seat Layout
+- **3D Animated Driver Cabin (`AnimatedDriverCabin`)**: Interactive spinning steering wheel with horn toot.
 - **Sleeper Buses (2+1)**: Dedicated tabbed decks (**Lower Deck** & **Upper Deck**) with single window berths and double aisle berths.
-- **Seater Buses (2+2)**: 9 rows with central walking aisle and front driver cabin indicator.
+- **Seater Buses (2+2)**: 9 rows with central illuminated walking aisle and seat markers.
 - **3 Color States**:
-  - ⬜ **Available**: Light grey with price tag.
-  - 🟦 **Selected**: Theme blue with checkmark.
-  - 🟥 **Booked**: Disabled red with lock state.
+  - ⬜ **Available**: Pure white with soft slate border and price tag.
+  - 🟦 **Selected**: Electric Royal Blue with active 2.4px border and white checkmark badge.
+  - 🟥 **Booked**: Soft pastel rose with disabled lock icon.
+- **Tactile Physics Bounce**: Seats spring down on tap with micro-bounce haptics.
 - **Dynamic Pricing**: Updates total fare in real time as seats are selected.
 - **Constraint Enforcement**: Prevents double-booking and limits bookings to a max of 6 seats per transaction.
 
@@ -54,11 +75,12 @@
 ### 6. 💳 Demo Payment Gateway (Simulation)
 - Authentically styled payment gateway clearly labeled for demo/evaluation.
 - Methods: **UPI (GPay/PhonePe/Paytm)**, **Credit/Debit Card**, and **Cash on Boarding**.
-- **Interactive Outcome Toggle**: Recruiter can switch between **Simulate Success** and **Simulate Failure** to test rollback behavior.
+- **Interactive Outcome Toggle**: Switch between **Simulate Success** and **Simulate Failure** to test rollback behavior.
 - Only successful payments commit bookings and reserve seats; failed payments abort without holding inventory.
 
 ### 7. 🎟️ Booking Confirmation, QR Code & PDF Tickets
 - Animated confirmation banner with unique PNR generation (`SB-XXXXXX`).
+- **Celebration Confetti Burst (`ConfettiCelebration`)**: Physics-based multi-colored confetti particles on booking success.
 - Embedded **QR Code** (`qr_flutter`) containing the cryptographic trip booking reference.
 - **Printable PDF Ticket Generation** (`pdf` & `printing`):
   - High-res vector layout with operator branding.
@@ -69,7 +91,7 @@
 - 3 distinct tabs: **Upcoming**, **Completed**, and **Cancelled**.
 - Real-time search by PNR.
 - **Eligible Cancellation Flow**:
-  - Updates booking status to `CANCELLED` in a database transaction.
+  - Updates booking status to `CANCELLED` in an ACID database transaction.
   - Automatically releases seats back to inventory (`is_booked = 0`).
   - Restores trip seat availability counter.
   - Records cancellation timestamp and user reason.
@@ -91,7 +113,7 @@ lib/
 │   ├── constants/        # AppColors, AppConstants, AppStrings
 │   ├── theme/            # Material 3 ThemeData, CardThemeData, TabBarThemeData
 │   ├── utils/            # CurrencyFormatter, DateFormatter, PnrGenerator, Validators
-│   └── widgets/          # CustomButton, CustomTextField, AppCard, StatusBadge, EmptyStateView
+│   └── widgets/          # CustomButton, BouncingWidget, AnimatedBusRoad, MysteryDiscountCard, TicketCardClipper, ConfettiCelebration
 ├── data/
 │   ├── database/         # AppDatabase, DatabaseTables (DDL), SampleData (Seed)
 │   ├── datasources/      # LocalDatabaseDataSource (SQL queries & txns), PreferencesDataSource
@@ -189,9 +211,10 @@ flutter test
 
 ## 🎨 UI/UX Design System
 
-- **Primary**: Deep Navy Blue (`#0D1B2A`, `#1B263B`)
-- **Secondary**: Sky Blue (`#0077B6`, `#38BDF8`)
-- **Accent**: Vibrant Orange (`#FF6B35`)
-- **Surface & Background**: Off-White (`#F8F9FA`) and Pure White (`#FFFFFF`)
-- **Typography**: Clean hierarchy with semi-bold headers and high-contrast labels.
+- **Theme Mode**: Crisp, modern Light Palette.
+- **Primary**: Modern Royal Navy & Blue (`#1E3A8A`, `#2563EB`)
+- **Secondary**: Vibrant Sky Blue & Azure (`#0284C7`, `#38BDF8`)
+- **Accent**: Sunset Coral & Orange (`#FF6B35`)
+- **Surface & Background**: Pure White (`#FFFFFF`) and Light Slate (`#F8FAFC`)
+- **Typography**: Clean hierarchy with bold headers and high-contrast labels.
 - **Material 3**: Fully compliant with Material 3 cards, navigation bars, and dialogs.
